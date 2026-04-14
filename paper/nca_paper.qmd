@@ -27,39 +27,25 @@ author:
         country: Italy
 author-note:
   disclosures:
-    data-sharing: ~
-    financial-support: ~
+    data-sharing: Data, code, and materials are available at https://github.com/feracotommaso/nca
+    conflict-of-interest: The authors have no conflict of interest to declare
+    financial-support: The authors received no funding for this study
+abstract: 'This study evaluates the interpretability of Necessary Condition Analysis (NCA) when applied to psychological data, where variables typically represent latent constructs measured through imperfect instruments. Using a unified simulation framework, we held the latent relationship between two variables constant while systematically varying common psychometric and sampling features, including score construction, reliability, ordinal scaling and threshold placement, skewness, and range restriction. Results indicate that NCA effect sizes are highly sensitive to properties of the observed score distribution. Substantial variability emerged across conditions despite identical latent associations. In particular, ordinal scaling, threshold shifts, and skewness consistently altered the geometry of the data space, producing marked changes in estimated necessity effects. Reliability and score construction also contributed to deviations, though to a lesser extent. Range restriction further amplified discrepancies by modifying both the latent and observed distributions. Crucially, NCA effect sizes were also influenced by the sample size of the simulations. Overall, observed-score NCA estimates frequently diverged from their latent counterparts, suggesting that NCA in psychological applications primarily reflects distributional features induced by measurement and sampling rather than stable properties of underlying constructs. These findings raise concerns about the substantive interpretation of necessity claims in psychology and highlight the need for stronger theoretical justification and more transparent reporting when applying NCA to psychometric data.'
 keywords: [necessary condition analysis, psychometrics, measurement, meta-research]
-format: #quarto render paper/livingSEBpaper.qmd --to all
+bibliography: nca_refs.bib
+format: #quarto render paper/nca_paper.qmd --to all
   apaquarto-html: default
   apaquarto-pdf:
     documentmode: man
   apaquarto-typst: default
   apaquarto-docx: default
-bibliography: nca_refs.bib
-
-# author: "Tommaso Feraco"
-# format: 
-#   # pdf:
-#   #   toc: true
-#   html:
-#     toc: true
-#     number-sections: true
-#     df-print: paged
 
 execute:
   echo: false
   warning: false
   message: false
   cache: false
-embed-resources: true
-
-abstract: "This study evaluates the interpretability of Necessary Condition Analysis (NCA) when applied to psychological data, where variables typically represent latent constructs measured through imperfect instruments. Using a unified simulation framework, we held the latent relationship between two variables constant while systematically varying common psychometric and sampling features, including score construction, reliability, ordinal scaling and threshold placement, skewness, and range restriction. 
-
-Results indicate that NCA effect sizes are highly sensitive to properties of the observed score distribution. Substantial variability emerged across conditions despite identical latent associations. In particular, ordinal scaling, threshold shifts, and skewness consistently altered the geometry of the data space, producing marked changes in estimated necessity effects. Reliability and score construction also contributed to deviations, though to a lesser extent. Range restriction further amplified discrepancies by modifying both the latent and observed distributions. Crucially, NCA effect sizes were also influenced by the sample size of the simulations.
-
-Overall, observed-score NCA estimates frequently diverged from their latent counterparts, suggesting that NCA in psychological applications primarily reflects distributional features induced by measurement and sampling rather than stable properties of underlying constructs. These findings raise concerns about the substantive interpretation of necessity claims in psychology and highlight the need for stronger theoretical justification and more transparent reporting when applying NCA to psychometric data.
-"
+embed-resources: false
 ---
 
 ```{r}
@@ -459,6 +445,7 @@ Across all summarized conditions, the average observed NCA effect ranged from `r
 ```{r}
 #| label: tbl-summary
 #| eval: false
+#| include: false
 
 kableExtra::kable(summary_data, digits = 2)
 ```
