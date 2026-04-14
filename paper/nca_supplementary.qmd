@@ -1,0 +1,212 @@
+---
+title: "Supplementary Materials"
+subtitle: "Necessary Condition Analysis With Psychological Data: A Psychometric Critique"
+author: "Tommaso Feraco"
+format:
+  html:
+    toc: true
+    number-sections: true
+    df-print: paged
+execute:
+  echo: false
+  warning: false
+  message: false
+  cache: false
+---
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+results <- read.csv(here::here("simulations/simulation_results.csv"))
+results <- read.csv(here::here("simulations/results_table.csv"))
+results_n <- read.csv(here::here("simulations/simulation_results_n.csv"))
+results_n <- read.csv(here::here("simulations/results_table_n.csv"))
+
+fmt_num <- function(x, digits = 3) round(x, digits)
+```
+
+# Overview
+
+This supplement reports the most useful numerical summaries from the simulations.  
+Across tables, the main quantities are:
+
+- `Observed d`: mean observed NCA effect size across replications.
+- `SD(d)`: standard deviation of the observed NCA effect size across replications.
+- `Mean r(X,Y)`: mean observed correlation between X and Y across replications.
+- `X skew` and `Y skew`: mean observed skewness of the analyzed X and Y scores across replications.
+- `Delta from latent base`: mean difference between the observed effect and the latent-reference NCA effect from the full latent sample in the same design cell.
+- `Delta from latent selected`: mean difference between the observed effect and the condition-specific latent reference after selection. This column is only used for the range-restriction block.
+
+```{r}
+block_labels <- c(
+  "1A_score_construction" = "Score construction",
+  "1B_reliability" = "Reliability / loading",
+  "1C_response_categories" = "Response categories",
+  "1D_threshold_shift" = "Threshold shift",
+  "1E_range_restriction" = "Range restriction"
+)
+
+tbl_overview <- results %>%
+  mutate(Block = recode(block, !!!block_labels)) %>%
+  group_by(Block) %>%
+  summarise(
+    `Mean observed d` = fmt_num(mean(mean_effect_size, na.rm = TRUE)),
+    `Mean SD(d)` = fmt_num(mean(sd_effect_size, na.rm = TRUE)),
+    `Mean r(X,Y)` = fmt_num(mean(mean_correlation, na.rm = TRUE)),
+    `Mean X skew` = fmt_num(mean(mean_x_skew_obs, na.rm = TRUE)),
+    `Mean Y skew` = fmt_num(mean(mean_y_skew_obs, na.rm = TRUE)),
+    `Mean delta from latent base` = fmt_num(mean(mean_delta_from_base_full, na.rm = TRUE)),
+    .groups = "drop"
+  ) %>%
+  arrange(Block)
+
+kable(tbl_overview, caption = "Table S1. Pooled overview of the five simulation blocks.")
+```
+
+# Latent-reference effects for the main design cells
+
+```{r}
+tbl_latent_reference <- results %>%
+  group_by(`Sample size` = n_input, Beta = beta) %>%
+  summarise(
+    `Latent reference d` = fmt_num(mean(mean_latent_effect_base_full, na.rm = TRUE)),
+    `Mean latent r(X,Y)` = fmt_num(mean(mean_correlation, na.rm = TRUE)),
+    .groups = "drop"
+  ) %>%
+  arrange(`Sample size`, Beta)
+
+kable(tbl_latent_reference, caption = "Table S2. Latent-reference NCA effect sizes for the main design cells.")
+```
+
+# Score construction
+
+```{r}
+tbl_score_construction <- results %>%
+  filter(block == "1A_score_construction") %>%
+  transmute(
+    `Sample size` = n_input,
+    Beta = beta,
+    `Score type` = score_type,
+    `Observed d` = fmt_num(mean_effect_size),
+    `SD(d)` = fmt_num(sd_effect_size),
+    `Mean r(X,Y)` = fmt_num(mean_correlation),
+    `X skew` = fmt_num(mean_x_skew_obs),
+    `Y skew` = fmt_num(mean_y_skew_obs),
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+  ) %>%
+  arrange(`Sample size`, Beta, `Score type`)
+
+kable(tbl_score_construction, caption = "Table S3. Score-construction block.")
+```
+
+# Reliability / loading strength
+
+```{r}
+tbl_reliability <- results %>%
+  filter(block == "1B_reliability") %>%
+  mutate(Loading = sub("loading_", "", condition_label)) %>%
+  transmute(
+    `Sample size` = n_input,
+    Beta = beta,
+    Loading,
+    `Observed d` = fmt_num(mean_effect_size),
+    `SD(d)` = fmt_num(sd_effect_size),
+    `Mean r(X,Y)` = fmt_num(mean_correlation),
+    `X skew` = fmt_num(mean_x_skew_obs),
+    `Y skew` = fmt_num(mean_y_skew_obs),
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+  ) %>%
+  arrange(`Sample size`, Beta, Loading)
+
+kable(tbl_reliability, caption = "Table S4. Reliability / loading block.")
+```
+
+# Response categories
+
+```{r}
+tbl_categories <- results %>%
+  filter(block == "1C_response_categories") %>%
+  mutate(`Response categories` = sub("n_cat_", "", condition_label)) %>%
+  transmute(
+    `Sample size` = n_input,
+    Beta = beta,
+    `Response categories`,
+    `Observed d` = fmt_num(mean_effect_size),
+    `SD(d)` = fmt_num(sd_effect_size),
+    `Mean r(X,Y)` = fmt_num(mean_correlation),
+    `X skew` = fmt_num(mean_x_skew_obs),
+    `Y skew` = fmt_num(mean_y_skew_obs),
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+  ) %>%
+  arrange(`Sample size`, Beta, `Response categories`)
+
+kable(tbl_categories, caption = "Table S5. Response-category block.")
+```
+
+# Threshold shift
+
+```{r}
+tbl_threshold_shift <- results %>%
+  filter(block == "1D_threshold_shift") %>%
+  separate(condition_label, into = c("Direction", "Magnitude"), sep = "_") %>%
+  transmute(
+    `Sample size` = n_input,
+    Beta = beta,
+    Direction,
+    Magnitude,
+    `Mean r(X,Y)` = fmt_num(mean_correlation),
+    `X skew` = fmt_num(mean_x_skew_obs),
+    `Y skew` = fmt_num(mean_y_skew_obs),
+    `Observed d` = fmt_num(mean_effect_size),
+    `SD(d)` = fmt_num(sd_effect_size),
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+  ) %>%
+  arrange(`Sample size`, Beta, Direction, as.numeric(Magnitude))
+
+kable(tbl_threshold_shift, caption = "Table S6. Threshold-shift block, including the resulting observed skewness of X and Y.")
+```
+
+# Range restriction
+
+```{r}
+tbl_range_restriction <- results %>%
+  filter(block == "1E_range_restriction") %>%
+  transmute(
+    `Sample size` = n_input,
+    Beta = beta,
+    Restriction = condition_label,
+    `Latent d (selected sample)` = fmt_num(mean_latent_effect_condition_selected),
+    `Selection effect on latent d` = fmt_num(mean_selection_effect_on_latent_d),
+    `Observed d` = fmt_num(mean_effect_size),
+    `SD(d)` = fmt_num(sd_effect_size),
+    `Mean r(X,Y)` = fmt_num(mean_correlation),
+    `X skew` = fmt_num(mean_x_skew_obs),
+    `Y skew` = fmt_num(mean_y_skew_obs),
+    `Delta from latent selected` = fmt_num(mean_delta_from_condition_selected)
+  ) %>%
+  arrange(`Sample size`, Beta, Restriction)
+
+kable(tbl_range_restriction, caption = "Table S7. Range-restriction block. The key comparison is between the observed effect and the latent reference in the selected sample.")
+```
+
+# Latent-only sample-size simulation
+
+```{r}
+tbl_latent_n <- results_n %>%
+  transmute(
+    `Sample size` = n_input,
+    Beta = beta,
+    `Observed d` = fmt_num(mean_effect_size),
+    `SD(d)` = fmt_num(sd_effect_size),
+    `95% CI low` = fmt_num(ci_low),
+    `95% CI high` = fmt_num(ci_high),
+    `Mean r(X,Y)` = fmt_num(mean_correlation),
+    `X skew` = fmt_num(mean_x_skew),
+    `Y skew` = fmt_num(mean_y_skew)
+  ) %>%
+  arrange(`Sample size`)
+
+kable(tbl_latent_n, caption = "Table S8. Latent-only sample-size simulation used to evaluate how the NCA effect changes as N increases while the latent relation remains fixed.")
+```

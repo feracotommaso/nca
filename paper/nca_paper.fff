@@ -1,0 +1,150 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-bib}Publications per year across all disciplines and
+in psychology. Data were downloaded from Scopus on April 4th 2026 using
+``necessary condition analysis'' as search term.}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-bib-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-nca}Example of an NCA plot. The scatterplot shows
+the relation between X and Y. NCA evaluates whether X is necessary for Y
+by identifying an empty upper-left region, meaning that high values of Y
+are absent when X is low. The ceiling lines (CE-FDH and CR-FDH) mark the
+estimated boundary of this empty space, while the OLS line is included
+only to contrast NCA with standard regression approaches.}
+
+\centering{
+
+\includegraphics[width=7in,height=\textheight,keepaspectratio]{ncaplot.png}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-summary}Summary of the simulation results across all
+experimental blocks. Points show the average observed NCA effect size
+for each condition after averaging across sample size and latent
+association (𝛽); vertical intervals indicate uncertainty around these
+averages.}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-summary-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-block1}Effects of score construction on observed NCA
+estimates.}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-block1-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-block2}Effects of loading strength on observed NCA
+estimates}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-block2-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-block3}Effects of the number of response categories
+on observed NCA estimates}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-block3-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-block4}Effects of threshold shifts on observed NCA
+estimates}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-block4-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-block5}Effects of range restriction on observed NCA
+estimates}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-block5-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+
+\caption{\label{fig-n}Sample-size dependence of the latent-level NCA
+effect}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/fig-n-1.pdf}}
+
+}
+
+\end{figure*}

@@ -1,0 +1,200 @@
+---
+title: "Simulation Blocks 1A-1E for NCA With Psychological Data"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Overview
+
+This notebook runs the first five one-factor-at-a-time simulation blocks for the NCA methods paper.
+
+The logic is the following:
+
+- **1A**: vary score construction only;
+- **1B**: vary reliability/loading strength only;
+- **1C**: vary ordinal scaling only, including the optional threshold-spacing manipulation;
+- **1D**: vary latent skewness only;
+- **1E**: vary range restriction only.
+
+The baseline latent model is a simple linear relation without a true latent necessity mechanism.
+
+## Load functions
+
+```{r}
+source("nca_simulation_1A_1E.R")
+```
+
+## Global settings
+
+For local testing, keep the number of replications low. For the paper, increase `reps_main` to something like 500.
+
+```{r}
+reps_demo <- 25
+n_main <- 1000
+test_rep_main <- 200
+```
+
+# Simulation 1A: Score construction
+
+## Rationale
+
+This block keeps the latent relation, measurement model, and sample fixed. It compares NCA results obtained from:
+
+- sum scores,
+- mean scores,
+- CFA factor scores.
+
+## Run
+
+```{r}
+res_1A <- simulate_1A_score_construction(
+  reps = reps_demo,
+  n = n_main,
+  test_rep = test_rep_main,
+  progress = FALSE
+)
+
+sum_1A <- summarise_simulation_results(res_1A)
+sum_1A
+```
+
+## Plot
+
+```{r}
+plot_effect_size_density(res_1A)
+```
+
+# Simulation 1B: Reliability / loading strength
+
+## Rationale
+
+This block varies item loading strength while keeping everything else fixed.
+
+## Run
+
+```{r}
+res_1B <- simulate_1B_reliability(
+  reps = reps_demo,
+  loading_levels = c(0.50, 0.70, 0.85),
+  n = n_main,
+  test_rep = test_rep_main,
+  progress = FALSE
+)
+
+sum_1B <- summarise_simulation_results(res_1B)
+sum_1B
+```
+
+## Plot
+
+```{r}
+plot_mean_effects(sum_1B, "loading")
+```
+
+# Simulation 1C: Ordinal scaling
+
+## Rationale
+
+This block varies:
+
+- number of response categories (5 vs 7), and
+- threshold spacing (**symmetric** vs **skewed**).
+
+The second factor implements the optional extension we discussed.
+
+## Run
+
+```{r}
+res_1C <- simulate_1C_ordinal_scaling(
+  reps = reps_demo,
+  n_cat_levels = c(5, 7),
+  threshold_spacings = c("symmetric", "skewed"),
+  n = n_main,
+  test_rep = test_rep_main,
+  progress = FALSE
+)
+
+sum_1C <- summarise_simulation_results(res_1C)
+sum_1C
+```
+
+## Plot
+
+```{r}
+plot_effect_size_density(res_1C, facet_var = "threshold_spacing")
+```
+
+# Simulation 1D: Skewness
+
+## Rationale
+
+This block keeps the linear latent relation fixed while changing the shape of the latent distributions.
+
+## Run
+
+```{r}
+res_1D <- simulate_1D_skewness(
+  reps = reps_demo,
+  n = n_main,
+  test_rep = test_rep_main,
+  progress = FALSE
+)
+
+sum_1D <- summarise_simulation_results(res_1D)
+sum_1D
+```
+
+## Plot
+
+```{r}
+plot_effect_size_density(res_1D, facet_var = "skew_label")
+```
+
+# Simulation 1E: Range restriction
+
+## Rationale
+
+This block varies sample composition while leaving the latent relation and measurement structure unchanged.
+
+## Run
+
+```{r}
+res_1E <- simulate_1E_range_restriction(
+  reps = reps_demo,
+  restrictions = c("full", "x_upper", "x_middle", "y_upper"),
+  n = n_main,
+  test_rep = test_rep_main,
+  progress = FALSE
+)
+
+sum_1E <- summarise_simulation_results(res_1E)
+sum_1E
+```
+
+## Plot
+
+```{r}
+plot_effect_size_density(res_1E, facet_var = "restriction")
+```
+
+# Save outputs
+
+```{r}
+# Uncomment when you want to save the results locally.
+# save_simulation_bundle(res_1A, "res_1A")
+# save_simulation_bundle(res_1B, "res_1B")
+# save_simulation_bundle(res_1C, "res_1C")
+# save_simulation_bundle(res_1D, "res_1D")
+# save_simulation_bundle(res_1E, "res_1E")
+```
+
+# Next steps
+
+For the main paper, the natural next step after these one-factor blocks is the reduced factorial design.
