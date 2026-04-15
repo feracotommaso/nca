@@ -1,7 +1,7 @@
-# ================================================================
-# Necessary Condition Analysis (NCA) with psychological data
+# ================================================================ #
+# Necessary Condition Analysis (NCA) with psychological data -----
 # Unified paired/common-source simulation script
-# ---------------------------------------------------------------
+# --------------------------------------------------------------- #
 # Purpose:
 #   Self-contained simulation framework for the methods paper on
 #   NCA and psychological measurement.
@@ -31,11 +31,11 @@
 #   - The script stores distribution descriptors of the final analyzed
 #     X and Y scores at each replication: mean, SD, skewness, kurtosis.
 #   - Example runs are commented out so the file is source-safe.
-# ================================================================
+# ================================================================ #
 
-# -----------------------------
-# 0. Packages
-# -----------------------------
+# ----------------------------- #
+# 0. Packages -------------------
+# ----------------------------- #
 
 required_packages <- c(
   "dplyr", "purrr", "tibble", "tidyr", "ggplot2",
@@ -60,9 +60,9 @@ library(ggplot2)
 library(furrr)
 library(future)
 
-# -----------------------------
-# 1. Small utility helpers
-# -----------------------------
+# ----------------------------- #
+# 1. Small utility helpers ------
+# ----------------------------- #
 
 `%||%` <- function(x, y) {
   if (is.null(x)) y else x
@@ -99,9 +99,9 @@ sample_kurtosis <- function(x, na.rm = TRUE, excess = FALSE) {
   if (excess) k - 3 else k
 }
 
-# -----------------------------
-# 2. Design validators
-# -----------------------------
+# ----------------------------- #
+# 2. Design validators ----------
+# ----------------------------- #
 
 .validate_score_types <- function(score_types) {
   score_types <- unique(score_types)
@@ -133,9 +133,9 @@ sample_kurtosis <- function(x, na.rm = TRUE, excess = FALSE) {
   restrictions
 }
 
-# -----------------------------
-# 3. Latent-variable generation
-# -----------------------------
+# -------------------------------- #
+# 3. Latent-variable generation ----
+# -------------------------------- #
 
 simulate_latent_from_common_source <- function(n = 1000,
                                                beta = 0.40,
@@ -161,9 +161,9 @@ simulate_latent_from_common_source <- function(n = 1000,
   )
 }
 
-# -----------------------------
-# 4. Ordinal item generation
-# -----------------------------
+# ----------------------------- #
+# 4. Ordinal item generation ----
+# ----------------------------- #
 
 make_thresholds <- function(n_cat = 5,
                             spacing = c("central", "shifted"),
@@ -259,9 +259,9 @@ simulate_scale_items <- function(eta,
   as_tibble(out)
 }
 
-# -----------------------------
-# 5. Score construction
-# -----------------------------
+# ----------------------------- #
+# 5. Score construction ---------
+# ----------------------------- #
 
 make_lavaan_factor_scores <- function(dat, items, factor_name = "F") {
   model_syntax <- paste0(factor_name, " =~ ", paste(items, collapse = " + "))
@@ -332,9 +332,9 @@ construct_scores <- function(dat,
   )
 }
 
-# -----------------------------
-# 6. Range restriction / sample composition
-# -----------------------------
+# -------------------------------------------- #
+# 6. Range restriction / sample composition ----
+# -------------------------------------------- #
 
 apply_range_restriction <- function(dat,
                                     restriction = c("full", "x_lower", "x_upper", "y_lower", "y_upper"),
@@ -365,9 +365,9 @@ apply_range_restriction <- function(dat,
   }
 }
 
-# -----------------------------
-# 7. NCA helpers
-# -----------------------------
+# ----------------------------- #
+# 7. NCA helpers ----------------
+# ----------------------------- #
 
 extract_nca_test_fields <- function(test_object) {
   if (is.null(test_object)) {
@@ -633,9 +633,9 @@ get_reference_metrics <- function(dat,
   )
 }
 
-# -----------------------------
-# 8. Observed-condition engine
-# -----------------------------
+# ------------------------------- #
+# 8. Observed-condition engine ----
+# ------------------------------- #
 
 run_observed_condition <- function(latent_full,
                                    latent_selected,
@@ -739,9 +739,9 @@ run_observed_condition <- function(latent_full,
   })
 }
 
-# -----------------------------
-# 9. One unified paired replication
-# -----------------------------
+# ------------------------------------ #
+# 9. One unified paired replication ----
+# ------------------------------------ #
 
 run_unified_paired_replication <- function(rep_id,
                                            n = 1000,
@@ -973,9 +973,9 @@ run_unified_paired_replication <- function(rep_id,
     )
 }
 
-# -----------------------------
-# 10. Replicated runs
-# -----------------------------
+# ----------------------------- #
+# 10. Replicated runs -----------
+# ----------------------------- #
 
 simulate_unified_paired <- function(reps = 100,
                                     progress = TRUE,
@@ -1072,9 +1072,9 @@ simulate_unified_paired_across_design <- function(n_values = c(250, 500, 1000),
   })
 }
 
-# -----------------------------
-# 11. Summaries
-# -----------------------------
+# ----------------------------- #
+# 11. Summaries -----------------
+# ----------------------------- #
 
 summarise_unified_paired_results <- function(results) {
   results %>%
@@ -1124,9 +1124,9 @@ summarise_unified_paired_by_block <- function(results) {
     arrange(n_input, beta, block, condition_label, score_type)
 }
 
-# -----------------------------
-# 12. Plot helpers
-# -----------------------------
+# ----------------------------- #
+# 12. Plot helpers --------------
+# ----------------------------- #
 
 plot_effect_size_density <- function(results, facet_var = NULL) {
   p <- ggplot(results, aes(x = effect_size, colour = score_type)) +
@@ -1157,9 +1157,9 @@ plot_mean_effects <- function(summary_tbl, x_var) {
     theme_minimal(base_size = 12)
 }
 
-# -----------------------------
-# 13. Saving helpers
-# -----------------------------
+# ----------------------------- #
+# 13. Saving helpers ------------
+# ----------------------------- #
 
 save_simulation_bundle <- function(results, file_stub) {
   saveRDS(results, paste0(file_stub, ".rds"))
@@ -1170,73 +1170,9 @@ save_simulation_bundle <- function(results, file_stub) {
   )
 }
 
-# -----------------------------
-# 14. Example runs (commented)
-# -----------------------------
-
-future::plan(future::multisession, workers = 8)#parallelly::availableCores() - 2)
-
-# # One design cell
-# startT <- Sys.time()
-# res_one <- simulate_unified_paired(
-#   reps = 4,
-#   n = 500,
-#   beta = 0.40,
-#   test_rep = 0,
-#   progress = TRUE,
-#   parallel = FALSE
-# )
-# endT <- Sys.time()
-# endT-startT
-# tab_one <- summarise_unified_paired_results(res_one)
-# print(tab_one)
-
-# Across outer design factors (2 min each)
-startT <- Sys.time()
-res_grid <- simulate_unified_paired_across_design(
-  n_values = c(250, 500, 1000),
-  beta_values = c(0.20, 0.40, 0.60),
-  reps = 1000,
-  test_rep = 0,
-  progress = TRUE,
-  parallel_inner = TRUE,
-  seed = 20260411
-)
-endT <- Sys.time()
-endT-startT
-
-save_simulation_bundle(
-  results = res_grid,
-  file_stub = "simulations/simulation_results"
-)
-#res_grid <- nca_unified_paired_across_design
-tab_sum <- summarise_unified_paired_results(res_grid)
-
-write.csv(
-  tab_sum,
-  "simulations/results_table.csv",
-  row.names = FALSE
-)
-
-print(tab_sum)
-
-
-ggplot(res_grid, aes(x = effect_size, color = condition_value)) +
-  geom_density(na.rm = TRUE) +
-  labs(
-    x = "NCA effect size",
-    y = "Density",
-    colour = "Score type"
-  ) +
-  theme_minimal(base_size = 12) +
-  facet_wrap(~block + sample_size, ncol = 5)
-
-
-
-
-# -----------------------------
-# 15. Latent-only sample-size simulation
-# -----------------------------
+# ----------------------------------------- #
+# 14. Latent-only sample-size simulation ----
+# ----------------------------------------- #
 
 run_latent_n_only_replication <- function(rep_id,
                                           n = 1000,
@@ -1405,45 +1341,94 @@ summarise_latent_n_only <- function(results) {
     arrange(n_input)
 }
 
-res_latent_n <- simulate_latent_n_only_across_n(
-  n_values = c(250, 500, 1000, 2000, 4000, 
-               6000, 8000, 10000),
-  reps = 1000,
-  beta = 0.40,
-  test_rep = 0,
-  progress = TRUE,
-  parallel_inner = TRUE,
-  seed = 20260412
-)
 
-tab_latent_n <- summarise_latent_n_only(res_latent_n)
+# ----------------------------- #
+# 15. Main Runs (commented) -----
+# ----------------------------- #
 
-save_simulation_bundle(
-  results = res_latent_n,
-  file_stub = "simulations/simulation_results_n"
-)
+# future::plan(future::multisession, workers = 8)#parallelly::availableCores() - 2)
 
-write.csv(
-  tab_latent_n,
-  "simulations/results_table_n.csv",
-  row.names = FALSE
-)
+# # One design cell
+# startT <- Sys.time()
+# res_one <- simulate_unified_paired(
+#   reps = 4,
+#   n = 500,
+#   beta = 0.40,
+#   test_rep = 0,
+#   progress = TRUE,
+#   parallel = FALSE
+# )
+# endT <- Sys.time()
+# endT-startT
+# tab_one <- summarise_unified_paired_results(res_one)
+# print(tab_one)
 
-res_latent_n %>%
-  group_by(n_input) %>%
-  summarise(
-    mean_effect = mean(effect_size, na.rm = TRUE),
-    se = sd(effect_size, na.rm = TRUE) / sqrt(n()),
-    ci_low = mean_effect - 1.96 * se,
-    ci_high = mean_effect + 1.96 * se,
-    .groups = "drop"
-  ) %>%
-  ggplot(aes(x = n_input, y = mean_effect)) +
-  geom_point(size = 2.8) +
-  geom_line() +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 80) +
-  labs(
-    x = "Sample size",
-    y = "Mean latent NCA effect size"
-  ) +
-  theme_minimal(base_size = 12)
+# # Across outer design factors (2 min each)
+# startT <- Sys.time()
+# res_grid <- simulate_unified_paired_across_design(
+#   n_values = c(250, 500, 1000),
+#   beta_values = c(0.20, 0.40, 0.60),
+#   reps = 1000,
+#   test_rep = 0,
+#   progress = TRUE,
+#   parallel_inner = TRUE,
+#   seed = 20260411
+# )
+# endT <- Sys.time()
+# endT-startT
+# 
+# save_simulation_bundle(
+#   results = res_grid,
+#   file_stub = "simulations/simulation_results"
+# )
+# tab_sum <- summarise_unified_paired_results(res_grid)
+# write.csv(
+#   tab_sum,
+#   "simulations/results_table.csv",
+#   row.names = FALSE
+# )
+
+# ----------------------------- #
+# 16. Sample size runs ----------
+# ----------------------------- #
+
+# res_latent_n <- simulate_latent_n_only_across_n(
+#   n_values = c(250, 500, 1000, 2000, 4000, 
+#                6000, 8000, 10000),
+#   reps = 1000,
+#   beta = 0.40,
+#   test_rep = 0,
+#   progress = TRUE,
+#   parallel_inner = TRUE,
+#   seed = 20260412
+# )
+# tab_latent_n <- summarise_latent_n_only(res_latent_n)
+# 
+# save_simulation_bundle(
+#   results = res_latent_n,
+#   file_stub = "simulations/simulation_results_n"
+# )
+# write.csv(
+#   tab_latent_n,
+#   "simulations/results_table_n.csv",
+#   row.names = FALSE
+# )
+# 
+# res_latent_n %>%
+#   group_by(n_input) %>%
+#   summarise(
+#     mean_effect = mean(effect_size, na.rm = TRUE),
+#     se = sd(effect_size, na.rm = TRUE) / sqrt(n()),
+#     ci_low = mean_effect - 1.96 * se,
+#     ci_high = mean_effect + 1.96 * se,
+#     .groups = "drop"
+#   ) %>%
+#   ggplot(aes(x = n_input, y = mean_effect)) +
+#   geom_point(size = 2.8) +
+#   geom_line() +
+#   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 80) +
+#   labs(
+#     x = "Sample size",
+#     y = "Mean latent NCA effect size"
+#   ) +
+#   theme_minimal(base_size = 12)
