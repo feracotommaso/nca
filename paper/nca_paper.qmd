@@ -414,28 +414,28 @@ summary_data <- res_grid %>%
 overall_min <- min(summary_data$mean_effect, na.rm = TRUE)
 overall_max <- max(summary_data$mean_effect, na.rm = TRUE)
 
-b1_factor <- summary_data$mean_effect[summary_data$block == "1A Score construction" & summary_data$condition_plot == "factor"]
-b1_sum <- summary_data$mean_effect[summary_data$block == "1A Score construction" & summary_data$condition_plot == "sum"]
+b1_factor <- summary_data$mean_effect[summary_data$block == "Block 1" & summary_data$condition_plot == "factor"]
+b1_sum <- summary_data$mean_effect[summary_data$block == "Block 1" & summary_data$condition_plot == "sum"]
 
-b2_l50 <- summary_data$mean_effect[summary_data$block == "1B Reliability" & summary_data$condition_plot == "loading=0.5"]
-b2_l70 <- summary_data$mean_effect[summary_data$block == "1B Reliability" & summary_data$condition_plot == "loading=0.7"]
-b2_l85 <- summary_data$mean_effect[summary_data$block == "1B Reliability" & summary_data$condition_plot == "loading=0.85"]
+b2_l50 <- summary_data$mean_effect[summary_data$block == "Block 2" & summary_data$condition_plot == "loading=0.5"]
+b2_l70 <- summary_data$mean_effect[summary_data$block == "Block 2" & summary_data$condition_plot == "loading=0.7"]
+b2_l85 <- summary_data$mean_effect[summary_data$block == "Block 2" & summary_data$condition_plot == "loading=0.85"]
 
-b3_c4 <- summary_data$mean_effect[summary_data$block == "1C Response categories" & summary_data$condition_plot == "cats=4"]
-b3_c5 <- summary_data$mean_effect[summary_data$block == "1C Response categories" & summary_data$condition_plot == "cats=5"]
-b3_c7 <- summary_data$mean_effect[summary_data$block == "1C Response categories" & summary_data$condition_plot == "cats=7"]
+b3_c4 <- summary_data$mean_effect[summary_data$block == "Block 3" & summary_data$condition_plot == "cats=4"]
+b3_c5 <- summary_data$mean_effect[summary_data$block == "Block 3" & summary_data$condition_plot == "cats=5"]
+b3_c7 <- summary_data$mean_effect[summary_data$block == "Block 3" & summary_data$condition_plot == "cats=7"]
 
-b4_low50 <- summary_data$mean_effect[summary_data$block == "1D Threshold shift" & summary_data$condition_plot == "lower_0.50"]
-b4_low70 <- summary_data$mean_effect[summary_data$block == "1D Threshold shift" & summary_data$condition_plot == "lower_0.70"]
-b4_low100 <- summary_data$mean_effect[summary_data$block == "1D Threshold shift" & summary_data$condition_plot == "lower_1.00"]
-b4_up50 <- summary_data$mean_effect[summary_data$block == "1D Threshold shift" & summary_data$condition_plot == "upper_0.50"]
-b4_up70 <- summary_data$mean_effect[summary_data$block == "1D Threshold shift" & summary_data$condition_plot == "upper_0.70"]
-b4_up100 <- summary_data$mean_effect[summary_data$block == "1D Threshold shift" & summary_data$condition_plot == "upper_1.00"]
+b4_low50 <- summary_data$mean_effect[summary_data$block == "Block 4" & summary_data$condition_plot == "lower_0.50"]
+b4_low70 <- summary_data$mean_effect[summary_data$block == "Block 4" & summary_data$condition_plot == "lower_0.70"]
+b4_low100 <- summary_data$mean_effect[summary_data$block == "Block 4" & summary_data$condition_plot == "lower_1.00"]
+b4_up50 <- summary_data$mean_effect[summary_data$block == "Block 4" & summary_data$condition_plot == "upper_0.50"]
+b4_up70 <- summary_data$mean_effect[summary_data$block == "Block 4" & summary_data$condition_plot == "upper_0.70"]
+b4_up100 <- summary_data$mean_effect[summary_data$block == "Block 4" & summary_data$condition_plot == "upper_1.00"]
 
-b5_xlower <- summary_data$mean_effect[summary_data$block == "1E Range restriction" & summary_data$condition_plot == "x_lower"]
-b5_xupper <- summary_data$mean_effect[summary_data$block == "1E Range restriction" & summary_data$condition_plot == "x_upper"]
-b5_ylower <- summary_data$mean_effect[summary_data$block == "1E Range restriction" & summary_data$condition_plot == "y_lower"]
-b5_yupper <- summary_data$mean_effect[summary_data$block == "1E Range restriction" & summary_data$condition_plot == "y_upper"]
+b5_xlower <- summary_data$mean_effect[summary_data$block == "Block 5" & summary_data$condition_plot == "x_lower"]
+b5_xupper <- summary_data$mean_effect[summary_data$block == "Block 5" & summary_data$condition_plot == "x_upper"]
+b5_ylower <- summary_data$mean_effect[summary_data$block == "Block 5" & summary_data$condition_plot == "y_lower"]
+b5_yupper <- summary_data$mean_effect[summary_data$block == "Block 5" & summary_data$condition_plot == "y_upper"]
 ```
 
 The complete set of results is available in the project repository and in the supplementary materials. Here we focus on the main descriptive pattern: how much NCA's effect size $d$ changes when the latent relation is held constant but the observed-score representation is altered. @fig-summary reports a compact summary averaged across sample-size and latent-association conditions.
