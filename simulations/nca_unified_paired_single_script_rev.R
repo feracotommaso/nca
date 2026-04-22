@@ -979,22 +979,6 @@ run_unified_paired_replication <- function(rep_id,
 
 simulate_unified_paired <- function(reps = 100,
                                     progress = TRUE,
-                                    ...) {
-  out <- vector("list", length = reps)
-
-  for (r in seq_len(reps)) {
-    if (progress && (r %% max(1, floor(reps / 10)) == 0 || r == 1 || r == reps)) {
-      message("Running unified paired replication ", r, " / ", reps)
-    }
-
-    out[[r]] <- run_unified_paired_replication(rep_id = r, ...)
-  }
-
-  bind_rows(out)
-}
-
-simulate_unified_paired <- function(reps = 100,
-                                    progress = TRUE,
                                     seed = NULL,
                                     parallel = FALSE,
                                     ...) {
@@ -1070,6 +1054,67 @@ simulate_unified_paired_across_design <- function(n_values = c(250, 500, 1000),
         design_id = design_id
       )
   })
+}
+
+simulate_unified_paired_across_design <- function(n_values = c(250, 500, 1000),
+                                                  beta_values = c(0.20, 0.40, 0.60),
+                                                  reps = 100,
+                                                  progress = TRUE,
+                                                  seed = NULL,
+                                                  parallel_inner = FALSE,
+                                                  progress_results_csv = NULL,
+                                                  progress_summary_csv = NULL,
+                                                  ...) {
+  design <- tidyr::crossing(
+    sample_size = n_values,
+    beta = beta_values
+  ) %>%
+    dplyr::mutate(design_id = dplyr::row_number())
+  
+  out <- vector("list", length = nrow(design))
+  
+  for (i in seq_len(nrow(design))) {
+    sample_size <- design$sample_size[[i]]
+    beta <- design$beta[[i]]
+    design_id <- design$design_id[[i]]
+    
+    if (progress) {
+      message(
+        "Running design cell ", design_id, " / ", nrow(design),
+        ": n = ", sample_size,
+        ", beta = ", beta
+      )
+    }
+    
+    cell_seed <- if (is.null(seed)) NULL else seed + design_id * 100000
+    
+    out[[i]] <- simulate_unified_paired(
+      reps = reps,
+      progress = progress,
+      n = sample_size,
+      beta = beta,
+      seed = cell_seed,
+      parallel = parallel_inner,
+      ...
+    ) %>%
+      dplyr::mutate(
+        sample_size = sample_size,
+        design_beta = beta,
+        design_id = design_id
+      )
+    
+    if (!is.null(progress_results_csv) && !is.null(progress_summary_csv)) {
+      combined <- dplyr::bind_rows(out[seq_len(i)])
+      
+      save_progress_csv(
+        results = combined,
+        results_csv = progress_results_csv,
+        summary_csv = progress_summary_csv
+      )
+    }
+  }
+  
+  dplyr::bind_rows(out)
 }
 
 # ----------------------------- #
@@ -1166,6 +1211,25 @@ save_simulation_bundle <- function(results, file_stub) {
   write.csv(
     results %>% select(-bottleneck_table, -nca_model),
     paste0(file_stub, ".csv"),
+    row.names = FALSE
+  )
+}
+
+save_progress_csv <- function(results,
+                              results_csv,
+                              summary_csv) {
+  dir.create(dirname(results_csv), recursive = TRUE, showWarnings = FALSE)
+  dir.create(dirname(summary_csv), recursive = TRUE, showWarnings = FALSE)
+  
+  write.csv(
+    results %>% dplyr::select(-bottleneck_table, -nca_model),
+    results_csv,
+    row.names = FALSE
+  )
+  
+  write.csv(
+    summarise_unified_paired_results(results),
+    summary_csv,
     row.names = FALSE
   )
 }
@@ -1320,6 +1384,70 @@ simulate_latent_n_only_across_n <- function(n_values = c(250, 500, 1000, 2000, 3
   })
 }
 
+simulate_latent_n_only_across_n <- function(n_values = c(250, 500, 1000, 2000, 3000, 5000, 7000),
+                                            reps = 100,
+                                            beta = 0.40,
+                                            progress = TRUE,
+                                            seed = NULL,
+                                            parallel_inner = FALSE,
+                                            ceiling = "ce_fdh",
+                                            test_rep = 0,
+                                            steps = 10,
+                                            cutoff = 0,
+                                            progress_results_csv = NULL,
+                                            progress_summary_csv = NULL) {
+  design <- tibble::tibble(
+    sample_size = unique(n_values),
+    design_id = seq_along(unique(n_values))
+  )
+  
+  out <- vector("list", length = nrow(design))
+  
+  for (i in seq_len(nrow(design))) {
+    sample_size <- design$sample_size[[i]]
+    design_id <- design$design_id[[i]]
+    
+    if (progress) {
+      message(
+        "Running latent-only design cell ", design_id, " / ", nrow(design),
+        ": n = ", sample_size
+      )
+    }
+    
+    cell_seed <- if (is.null(seed)) NULL else seed + design_id * 100000
+    
+    out[[i]] <- simulate_latent_n_only(
+      reps = reps,
+      n = sample_size,
+      beta = beta,
+      progress = progress,
+      seed = cell_seed,
+      parallel = parallel_inner,
+      ceiling = ceiling,
+      test_rep = test_rep,
+      steps = steps,
+      cutoff = cutoff
+    ) %>%
+      dplyr::mutate(
+        sample_size = sample_size,
+        design_id = design_id
+      )
+    
+    if (!is.null(progress_results_csv) && !is.null(progress_summary_csv)) {
+      combined <- dplyr::bind_rows(out[seq_len(i)])
+      
+      save_progress_csv(
+        results = combined,
+        results_csv = progress_results_csv,
+        summary_csv = progress_summary_csv,
+        summary_fun = summarise_latent_n_only
+      )
+    }
+  }
+  
+  dplyr::bind_rows(out)
+}
+
 summarise_latent_n_only <- function(results) {
   results %>%
     group_by(n_input, beta) %>%
@@ -1341,12 +1469,31 @@ summarise_latent_n_only <- function(results) {
     arrange(n_input)
 }
 
+# ----------------------------- #
+# 15. Server Runs ---------------
+# ----------------------------- #
+future::plan(future::multisession, workers = 48)#parallelly::availableCores() - 2)
+future::plan(future::multisession, 
+             workers = max(1, parallelly::availableCores() - 1))#parallelly::availableCores() - 2)
+
+res_grid <- simulate_unified_paired_across_design(
+  n_values = c(250, 500, 1000),
+  beta_values = c(0.20, 0.40, 0.60),
+  reps = 1,
+  test_rep = 2,
+  progress = TRUE,
+  parallel_inner = TRUE,
+  seed = 20260422,
+  progress_results_csv = "simulations/simulation_results_server.csv",
+  progress_summary_csv = "simulations/results_table_server.csv"
+)
+
 
 # ----------------------------- #
 # 15. Main Runs (commented) -----
 # ----------------------------- #
 
-# future::plan(future::multisession, workers = 8)#parallelly::availableCores() - 2)
+# future::plan(future::multisession, workers = 48)#parallelly::availableCores() - 2)
 
 # # One design cell
 # startT <- Sys.time()
@@ -1363,13 +1510,14 @@ summarise_latent_n_only <- function(results) {
 # tab_one <- summarise_unified_paired_results(res_one)
 # print(tab_one)
 
-# # Across outer design factors (2 min each)
+# Across outer design factors (2 min each)
+# test_rep = 500, reps = 10
 # startT <- Sys.time()
 # res_grid <- simulate_unified_paired_across_design(
 #   n_values = c(250, 500, 1000),
 #   beta_values = c(0.20, 0.40, 0.60),
-#   reps = 1000,
-#   test_rep = 0,
+#   reps = 10,
+#   test_rep = 500,
 #   progress = TRUE,
 #   parallel_inner = TRUE,
 #   seed = 20260411
