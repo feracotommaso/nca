@@ -37,6 +37,36 @@ only to contrast NCA with standard regression approaches.}
  
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
+[H]
+
+\caption{Percentage of statistically significant NCA effects across
+conditions, as a function of sample size (N) and latent association (β),
+under a data-generating process without a true necessity condition.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/figsd-p-summary-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+[H]
+
+\caption{Percentage of statistically significant NCA effects across
+conditions, as a function of sample size (N) and latent association (β),
+under a data-generating process without a true necessity condition.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{nca_paper_files/figure-pdf/figsd-p-summary2-1.pdf}}
+
+}
+
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
 
 
 \caption{\label{fig-summary}Summary of the simulation results across all
@@ -139,7 +169,7 @@ estimates}
 
 
 \caption{\label{fig-n}Sample-size dependence of the latent-level NCA
-effect}
+effect.}
 
 \centering{
 

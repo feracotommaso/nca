@@ -19,8 +19,8 @@ library(dplyr)
 library(tidyr)
 library(knitr)
 
-results <- read.csv(here::here("simulations/simulation_results.csv"))
-results <- read.csv(here::here("simulations/results_table.csv"))
+results <- read.csv(here::here("simulations/simulation_results_fast_10k.csv"))
+results <- read.csv(here::here("simulations/results_table_fast_10k.csv"))
 results_n <- read.csv(here::here("simulations/simulation_results_n.csv"))
 results_n <- read.csv(here::here("simulations/results_table_n.csv"))
 
@@ -38,6 +38,7 @@ Across tables, the main quantities are:
 - `X skew` and `Y skew`: mean observed skewness of the analyzed X and Y scores across replications.
 - `Delta from latent base`: mean difference between the observed effect and the latent-reference NCA effect from the full latent sample in the same design cell.
 - `Delta from latent selected`: mean difference between the observed effect and the condition-specific latent reference after selection. This column is only used for the range-restriction block.
+- `Proportion of significance`: the proportion of *p* values below 0.05.
 
 ```{r}
 block_labels <- c(
@@ -58,6 +59,7 @@ tbl_overview <- results %>%
     `Mean X skew` = fmt_num(mean(mean_x_skew_obs, na.rm = TRUE)),
     `Mean Y skew` = fmt_num(mean(mean_y_skew_obs, na.rm = TRUE)),
     `Mean delta from latent base` = fmt_num(mean(mean_delta_from_base_full, na.rm = TRUE)),
+    `Proportion of significance` = fmt_num(mean(prop_significant, na.rm = TRUE)),
     .groups = "drop"
   ) %>%
   arrange(Block)
@@ -73,6 +75,7 @@ tbl_latent_reference <- results %>%
   summarise(
     `Latent reference d` = fmt_num(mean(mean_latent_effect_base_full, na.rm = TRUE)),
     `Mean latent r(X,Y)` = fmt_num(mean(mean_correlation, na.rm = TRUE)),
+    `Proportion of significance` = fmt_num(mean(prop_significant, na.rm = TRUE)),
     .groups = "drop"
   ) %>%
   arrange(`Sample size`, Beta)
@@ -94,7 +97,8 @@ tbl_score_construction <- results %>%
     `Mean r(X,Y)` = fmt_num(mean_correlation),
     `X skew` = fmt_num(mean_x_skew_obs),
     `Y skew` = fmt_num(mean_y_skew_obs),
-    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full),
+    `Proportion of significance` = fmt_num(prop_significant)
   ) %>%
   arrange(`Sample size`, Beta, `Score type`)
 
@@ -116,7 +120,8 @@ tbl_reliability <- results %>%
     `Mean r(X,Y)` = fmt_num(mean_correlation),
     `X skew` = fmt_num(mean_x_skew_obs),
     `Y skew` = fmt_num(mean_y_skew_obs),
-    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full),
+    `Proportion of significance` = fmt_num(prop_significant)
   ) %>%
   arrange(`Sample size`, Beta, Loading)
 
@@ -138,7 +143,8 @@ tbl_categories <- results %>%
     `Mean r(X,Y)` = fmt_num(mean_correlation),
     `X skew` = fmt_num(mean_x_skew_obs),
     `Y skew` = fmt_num(mean_y_skew_obs),
-    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full),
+    `Proportion of significance` = fmt_num(prop_significant)
   ) %>%
   arrange(`Sample size`, Beta, `Response categories`)
 
@@ -161,7 +167,8 @@ tbl_threshold_shift <- results %>%
     `Y skew` = fmt_num(mean_y_skew_obs),
     `Observed d` = fmt_num(mean_effect_size),
     `SD(d)` = fmt_num(sd_effect_size),
-    `Delta from latent base` = fmt_num(mean_delta_from_base_full)
+    `Delta from latent base` = fmt_num(mean_delta_from_base_full),
+    `Proportion of significance` = fmt_num(prop_significant)
   ) %>%
   arrange(`Sample size`, Beta, Direction, as.numeric(Magnitude))
 
@@ -184,7 +191,8 @@ tbl_range_restriction <- results %>%
     `Mean r(X,Y)` = fmt_num(mean_correlation),
     `X skew` = fmt_num(mean_x_skew_obs),
     `Y skew` = fmt_num(mean_y_skew_obs),
-    `Delta from latent selected` = fmt_num(mean_delta_from_condition_selected)
+    `Delta from latent selected` = fmt_num(mean_delta_from_condition_selected),
+    `Proportion of significance` = fmt_num(prop_significant)
   ) %>%
   arrange(`Sample size`, Beta, Restriction)
 

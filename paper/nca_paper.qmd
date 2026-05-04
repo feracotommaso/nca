@@ -14,6 +14,17 @@ author:
         city: Padua
         region: PD
         country: Italy
+  - name: Filippo Gambarota
+    corresponding: false
+    orcid: 0000-0002-6666-1747
+    email: filippo.gambarota@unipd.it
+    affiliations:
+      - name: University of Padua
+        department: Department of Developemntal Psychology and Socialization
+        address: 8 Via Venezia
+        city: Padua
+        region: PD
+        country: Italy
   - name: Enrico Toffalini
     corresponding: false
     orcid: 0009-0001-4661-8063
@@ -30,7 +41,7 @@ author-note:
     data-sharing: Data, code, and materials are available at https://github.com/feracotommaso/nca
     conflict-of-interest: The authors have no conflict of interest to declare
     financial-support: The authors received no funding for this study
-abstract: 'This study evaluates the interpretability of Necessary Condition Analysis (NCA) when applied to psychological data, where variables typically represent latent constructs measured through imperfect instruments. Using a unified simulation framework, we held the latent relationship between two variables constant while systematically varying common psychometric and sampling features, including score construction, reliability, ordinal scaling and threshold placement, skewness, and range restriction. Results indicate that NCA effect sizes are highly sensitive to properties of the observed score distribution. Substantial variability emerged across conditions despite identical latent associations. In particular, ordinal scaling, threshold shifts, and skewness consistently altered the geometry of the data space, producing marked changes in estimated necessity effects. Reliability and score construction also contributed to deviations, though to a lesser extent. Range restriction further amplified discrepancies by modifying both the latent and observed distributions. Crucially, NCA effect sizes were also influenced by the sample size of the simulations. Overall, observed-score NCA estimates frequently diverged from their latent counterparts, suggesting that NCA in psychological applications primarily reflects distributional features induced by measurement and sampling rather than stable properties of underlying constructs. These findings raise concerns about the substantive interpretation of necessity claims in psychology and highlight the need for stronger theoretical justification and more transparent reporting when applying NCA to psychometric data.'
+abstract: 'This study evaluates the interpretability of Necessary Condition Analysis (NCA) when applied to psychological data, where variables typically represent correlated latent constructs measured through imperfect instruments. Using a unified simulation framework, we simulated latent relationship between two variables under H0 for necessity while systematically varying common psychometric and sampling features, including score construction, reliability, ordinal scaling and threshold placement, skewness, and range restriction. Results indicate that NCA frequently yields false positives and effect sizes are highly sensitive to properties of the observed score distribution. Substantial variability emerged across conditions despite identical latent associations. In particular, ordinal scaling, threshold shifts, and skewness consistently altered the geometry of the data space, producing marked changes in estimated necessity effects. Reliability and score construction also contributed to deviations, though to a lesser extent. Range restriction further amplified discrepancies by modifying both the latent and observed distributions. Crucially, NCA effect sizes were also influenced by the sample size of the simulations. We conclude that NCA in psychological applications primarily reflects distributional features induced by measurement and sampling rather than stable properties of underlying constructs. These findings raise concerns about the substantive interpretation of necessity claims in psychology and highlight the need for stronger theoretical justification and more transparent reporting when applying NCA to psychometric data.'
 keywords: [necessary condition analysis, psychometrics, measurement, meta-research]
 bibliography: nca_refs.bib
 format: #quarto render paper/nca_paper.qmd --to all
@@ -63,9 +74,9 @@ library(patchwork)
 
 # Introduction
 
-Necessary Condition Analysis (NCA) is rapidly becoming an attractive option for researchers who are dissatisfied with the limits of average-effect logic and who want to ask a different kind of question from the one ordinarily addressed by regression, path analysis, or structural equation modeling (see @fig-bib). Rather than asking whether higher levels of a predictor are *associated with* or *sufficient to increase* an outcome on average, NCA asks whether some minimum level of a condition is *required* before a given level of the outcome can occur. The language of necessity is naturally appealing in the social sciences and psychology because social and psychological papers often contain propositions that sound exactly like necessity claims: some degree of cognitive ability is needed for creative performance, some degree of emotion regulation is needed for adaptive functioning, some degree of school engagement is needed for academic success, and so forth. In this sense, the attraction of NCA is understandable. It offers a formal method for examining bottlenecks, prerequisites, constraints, and “must-have” conditions rather than only “more-is-better” relations [@dulNecessaryConditionAnalysis2016; @dulNecessaryConditionAnalysis2023].
+Necessary Condition Analysis (NCA) is rapidly becoming an attractive option for researchers who are dissatisfied with the limits of average-effect logic and who want to ask a different kind of question from the one ordinarily addressed by regression, path analysis, or structural equation modeling (see @fig-bib). Rather than asking whether higher levels of a predictor are *associated with* or *sufficient to increase* an outcome on average, NCA asks whether some minimum level of a condition is *required* before a given level of the outcome can even occur. The language of necessity is naturally appealing in the social sciences and psychology because it offers more space for causal claims: some degree of cognitive ability is needed for creative performance, some degree of emotion regulation is needed for adaptive functioning, some degree of school engagement is needed for academic success, and so forth. In this sense, the attraction of NCA is understandable. It offers a formal method for examining bottlenecks, prerequisites, constraints, and “must-have” conditions rather than only “more-is-better” relations [@dulNecessaryConditionAnalysis2016; @dulNecessaryConditionAnalysis2023].
 
-Importantly, though its use is increasing, the field of psychology still has to adopt such method consistently (see @fig-bib). Before that happens, a robust analysis of NCA under the lens of psychological science and measurement is more than warranted.
+Importantly, though its use is increasing, the field of psychology still has to adopt such method consistently (see @fig-bib), but its adoption is promoted by some  researchers [@marchettiNecessityCausalityMental2026]. Before widespread adoption happens, a robust analysis of NCA under the lens of psychological science and measurement is more than warranted.
 
 ```{r}
 #| label: fig-bib
@@ -111,11 +122,11 @@ ggplot(plot_data, aes(x = Year, y = n, fill = field)) +
 
 The appeal of NCA lies in the fact that its logic is not merely semantic. The method operationalizes necessity in a clear geometric way. If low values of a condition $X$ are incompatible with high values of an outcome $Y$, then the upper-left corner of the $X$-$Y$ scatterplot should be empty or nearly empty. NCA quantifies that empty region, estimates a ceiling line, and translates the geometry of the scatterplot into an effect size and a bottleneck table. This is methodologically elegant. It also makes the method highly intuitive: a predictor is considered important not because the mean of $Y$ rises with $X$, but because the absence or low level of $X$ places a hard limit on how high $Y$ can become [@dulNecessaryConditionAnalysis2016; @dulNecessaryConditionAnalysis2023].
 
-Yet the very features that make NCA attractive also raise a serious question for psychology. Psychological theories are usually stated in terms of *latent constructs*, whereas NCA is typically applied to *observed scores*. Even when researchers use the language of “intelligence,” “motivation,” “emotion regulation,” or “self-control,” the empirical input into NCA is generally not the construct itself, but a scale score, composite, factor score, or model-based proxy derived from a particular instrument. This is not a small technical detail. It creates a possible mismatch between the theoretical object of interest and the empirical object to which NCA is actually applied. NCA’s own guidelines appropriately emphasize the need for theoretical justification and “meaningful data,” and they explicitly note that the method can be used with indicator scores, construct or latent-variable scores, and factor scores so long as these are valid and reliable [@dulNecessaryConditionAnalysis2016; @dulNecessaryConditionAnalysis2023; @marchettiNecessityCausalityMental2026]. However, once the problem is framed in psychometric terms, the requirement of “meaningful data” becomes much more demanding than it first appears.
+Yet the very features that make NCA attractive also raise a serious question for psychology. Psychological theories are usually stated in terms of *latent constructs*, whereas NCA is typically applied to *observed scores*. Even when researchers use the language of “intelligence,” “motivation,” “emotion regulation,” or “self-control,” the empirical input into NCA is generally not the construct itself, but a scale score, composite, factor score, or model-based proxy derived from a particular instrument. This is not a small technical detail. It creates a possible mismatch between the theoretical object of interest and the empirical object to which NCA is actually applied. NCA’s own guidelines appropriately emphasize the need for theoretical justification and “meaningful data”, and they explicitly note that the method can be used with indicator scores, construct or latent-variable scores, and factor scores so long as these are valid and reliable [@dulNecessaryConditionAnalysis2016; @dulNecessaryConditionAnalysis2023; @marchettiNecessityCausalityMental2026]. However, once the problem is framed in psychometric terms, the requirement of “meaningful data” becomes much more demanding than it first appears.
 
 The issue is not simply whether a score is “good enough” in the generic sense of having acceptable reliability. The deeper question is what it would mean for a necessity claim to be interpretable when the variables have no natural metric, are measured through ordinal item responses, depend on identification constraints or score-construction rules, and may or may not be comparable across groups, instruments, or studies. In many psychological applications, the substantive conclusion eventually drawn from NCA is a statement about a *construct*—for example, that a certain level of intelligence is necessary for creativity [@karwowskiIntelligenceChildhoodCreative2017]. But the quantity to which the method has actually been applied may be a raw total score, an average of Likert items, a standardized composite, a factor score estimate, or a latent score produced by a particular model. Whether these different representations are interchangeable is itself a psychometric question, not something NCA settles by construction [@mcneishThinkingTwiceSum2020; @mcneishPsychometricPropertiesSum2023; @widamanThinkingThriceSum2022].
 
-We argue that the interpretability of NCA becomes especially fragile in psychology because the method is applied to score geometry while psychological theories are usually about latent constructs and their relationships. Once this distinction is taken seriously, several concerns follow immediately: first, the “necessary condition” may be a property of a score rather than of a construct; second, the estimated threshold may depend on scale definition and sample range; third, because NCA relies on the boundary of the data cloud rather than on its center, the method may be unusually vulnerable to skewness, range restriction, and measurement error in the parts of the scale that matter most for the analysis; and fourth, comparability across groups or instruments may be compromised by measurement noninvariance. Finally, NCA may not be suited to unveil the *true* data generating process, which is presumably the main aim of psychological science [@sorjonenNecessityFunctionSkewness2017; @sorjonenPredictingSignificanceNecessity2019].
+In sum, we argue that the interpretability of NCA becomes especially fragile in psychology because the method is applied to score geometry while psychological theories are usually about latent constructs and their relationships. Once this distinction is taken seriously, several concerns follow immediately: first, the “necessary condition” may be a property of a score rather than of a construct; second, the estimated threshold may depend on scale definition and sample range; third, because NCA relies on the boundary of the data cloud rather than on its center, the method may be unusually vulnerable to skewness, range restriction, and measurement error in the parts of the scale that matter most for the analysis; and fourth, comparability across groups or instruments may be compromised by measurement noninvariance. Finally, NCA may not be suited to unveil the *true* data generating process, which is presumably the main aim of psychological science [@sorjonenNecessityFunctionSkewness2017; @sorjonenPredictingSignificanceNecessity2019]. Indeed, NCA might detect necessities when the *true* generating process is a simple causal association (i.e., two variables are simply correlated, causing the top-left corner proportionally difficult to populate). Whether the method can really distinguish a correlation without necessities from a necessity condition is still substantially untested.
 
 # What NCA Estimates, Statistically
 
@@ -153,31 +164,35 @@ To estimate the necessary conditions several ceiling techniques were proposed, a
 
 NCA’s practical output extends beyond a single effect size. The method also produces *bottleneck tables* that indicate the level of a condition required to make a given outcome level possible. These bottleneck levels can be expressed as percentages of the observed range, as actual values, as percentiles, or as percentages of the maximum. In applications, these tables are often the most compelling part of the analysis because they seem to provide directly interpretable thresholds. Yet the review article explicitly notes that the default bottleneck table expresses both $X$ and $Y$ in percentages of their respective ranges, with 0% corresponding to the minimum and 100% to the maximum. Thus, the familiar “minimum required level” reported by NCA is not a threshold in an abstract construct space; it is a threshold defined relative to a particular representation of the observed range [@dulNecessaryConditionAnalysis2023].
 
-NCA has also developed inferential tools [@dulStatisticalSignificanceTest2020]. The statistical significance paper proposes an approximate permutation test as a minimum statistical test for NCA and recommends that a condition be treated as necessary only if three requirements are met: theoretical justification, an effect size greater than zero, and a small $p$-value. The same article also explicitly notes that future development of NCA could include approaches that model measurement error, among other extensions. This acknowledgment is especially relevant for psychology, because it means that even within the NCA literature the current inferential machinery is not presented as fully resolving the problem of noisy measurement [@dulStatisticalSignificanceTest2020], but it also indirectly implies that NCA aims to work with latent variables and constructs.
+NCA has also developed inferential tools [@dulStatisticalSignificanceTest2020]. The statistical significance paper proposes an approximate permutation test as a minimum statistical test for NCA and recommends that a condition be treated as necessary only if three requirements are met: theoretical justification, an effect size greater than zero, and a small $p$-value. However, the authors tested their permutation strategy for *p* values against uncorrelated variables or against true necessity conditions. They did not test how the test performs under a correlation scenario, which is the most typical scenario in psychological research.
 
-Indeed, the crucial point, then, is that NCA estimates a property of the *observed score space*: the size of a ceiling zone relative to a scope, plus the associated bottleneck levels implied by the estimated ceiling line. This make the interpretive leap from “observed score bottleneck” to “latent psychological necessity” much larger than it is often presented to be.
+The same article also explicitly notes that future development of NCA could include approaches that model measurement error, among other extensions. This acknowledgment is especially relevant for psychology, because it means that even within the NCA literature the current inferential machinery is not presented as fully resolving the problem of noisy measurement [@dulStatisticalSignificanceTest2020], but it also indirectly implies that NCA aims to work with latent variables and constructs.
+
+The crucial points, then, is that NCA permutations test were not tested agains a correlation scenario and that NCA estimates a property of the *observed score space* nor of a *latent construct space*: the size of a ceiling zone relative to a scope, plus the associated bottleneck levels implied by the estimated ceiling line. This make the interpretive leap from “observed score bottleneck” and significant *p* values to significant “latent psychological necessity” much larger than it is often presented to be.
 
 # Why Psychological Data Are a Special Problem
 
 The basic machinery of NCA can be described without reference to any particular discipline. In principle, the same logic can be applied to natural metrics such as years of experience, physiological indicators, or financial resources, as well as to psychometric scores. But psychological data are not merely another instance of the general case. They raise special difficulties because the substantive entities of interest are usually latent constructs, whereas the data available for analysis are instrument-dependent observations. This distinction affects not only estimation, but interpretation. A necessity claim is substantively strong: it implies that an outcome level is impossible unless a condition reaches at least a certain level. In psychological research, however, both the condition and the outcome are commonly measured in ways that are model dependent, scale dependent, and potentially noncomparable across contexts. For that reason, the move from NCA’s geometry to substantive psychological inference requires much more justification than is typically acknowledged [@merkleIdentificationScalingLatent2026], unless one is interested in the scale-specific values without any interest in generalizing to (nor informing) substantive theories or other measurement tools.
 
+Finally, psychological data are usually assumed to be generated from causal-correlational processes and not from necessity conditions, unless clinical cut-offs are imposed.
+
+In the next sections, we will repeat and deepen the multiple causes of distorsion of NCA estimates with psychological data.
+
 ## Constructs Are Latent, but NCA Is Usually Run on Observed Scores
 
 A first problem is ontological and psychometric at the same time. Psychological constructs such as intelligence, depression, self-efficacy, or conscientiousness are generally treated as latent variables or latent attributes, not as directly observed quantities. Even when researchers use a composite score in practice, the theoretical entity to which they wish to generalize is usually not the sum or mean of the item responses as such, but the underlying construct those items are intended to represent.
 
-This point matters for NCA because the method nearly always takes *scores* as its inputs. Those scores may be simple sums, means, standardized composites, factor scores, or latent-variable estimates exported from a separate model. NCA does not itself adjudicate the psychometric adequacy of these inputs. NCA proponents suggest that it works on any possible measures provided the scores are valid and reliable. That flexibility is useful from an applied perspective, but it also means that NCA inherits the unresolved psychometric assumptions of whatever score-construction method was used upstream [@dulNecessaryConditionAnalysis2023].
+This point matters for NCA because the method nearly always takes *scores* as its inputs. NCA proponents suggest that it works on any possible measures provided the scores are valid and reliable, but does not adjudicate the psychometric adequacy of its inputs. That flexibility is useful from an applied perspective, but it also means that NCA inherits the unresolved psychometric assumptions of whatever score-construction method was used upstream [@dulNecessaryConditionAnalysis2023].
 
-For psychology, this is not a marginal concern because score construction is not a neutral preprocessing step. Sum scoring is itself a constrained latent-variable model rather than a model-free arithmetic operation [@mcneishThinkingTwiceSum2020]. Unjustified sum scoring can affect validity, reliability, and classification based on score cutoffs. This argument does not imply that sum scores are never acceptable. It does imply, however, that a score used in downstream analysis embodies assumptions about item equivalence, weighting, and measurement structure. If those assumptions are weakly justified, any claim that depends critically on the exact geometry of the resulting score distribution must be interpreted with caution [@mcneishThinkingTwiceSum2020].
+For psychology, this is not a marginal concern because score construction is not a neutral preprocessing step. Sum scoring is itself a constrained latent-variable model rather than a model-free arithmetic operation [@mcneishThinkingTwiceSum2020]. Unjustified sum scoring can affect validity, reliability, and classification based on score cutoffs. This argument does not imply that sum scores are never acceptable. It does imply, however, that a score used in downstream analysis embodies assumptions about item equivalence, weighting, and measurement structure. If those assumptions are weakly justified, any claim that depends critically on the exact geometry of the resulting score distribution must be interpreted with caution [@mcneishThinkingTwiceSum2020; @mcneishPsychometricPropertiesSum2023].
 
-A further example comes from McNeish’s simulation study showing that the psychometric properties of sum scores and factor scores can differ even when the correlation between them is .96 or .98. In his simulations, factor scores had higher correlations with true scores, greater sensitivity, and higher reliability than sum scores, despite the very high correlation between the two score types [@mcneishPsychometricPropertiesSum2023].
-
-For NCA, this has an immediate implication. A necessity claim based on a sum score is not automatically equivalent to a necessity claim about the corresponding factor score, let alone about the latent construct itself. If different admissible score representations of the same construct yield different scatterplot geometries, different ceiling lines, or different bottleneck thresholds, then the estimated “necessary condition” is partly a function of score construction. In such circumstances, the strong substantive interpretation—“construct $X$ is necessary for construct $Y$”—moves beyond what the analysis itself directly establishes. At minimum, one would need to show that the NCA result is robust across defensible score representations before elevating it from a property of the score to a property of the construct.
+For NCA, this has an immediate implication. A necessity claim based on a sum score is not automatically equivalent to a necessity claim about the corresponding factor score, let alone about the latent construct itself. If different admissible score representations of the same construct yield different scatterplot geometries, different ceiling lines, or different bottleneck thresholds, then the estimated “necessary condition” is partly a function of score construction. In such circumstances, the strong substantive interpretation—“construct $X$ is necessary for construct $Y$”—moves beyond what the analysis itself directly establishes. At minimum, one would need to show that the NCA result is robust across multiple defensible score representations before elevating it from a property of the score to a property of the construct.
 
 ## Thresholds Are Scale-Dependent
 
-A second problem follows from the fact that NCA thresholds are defined in the metric of the score representation. In psychometrics, however, scale is not a transparent mirror of the construct. For latent variables, scale is established by identification constraints and parameterization choices. Merkle, Winter, and Fitzsimmons show this very clearly in the context of ordinal factor analysis. They note that social scientists often treat ordinal items as though they were continuous, and they develop “integer constraints” that place latent variables on the scale of the observed, integer-coded ordinal variables [@merkleIdentificationScalingLatent2026].
+A second strictly related problem follows from the fact that NCA thresholds are defined in the metric of the score representation. In psychometrics, however, scale is not a transparent mirror of the construct. Merkle, Winter, and Fitzsimmons show this very clearly in the context of ordinal factor analysis. They note that social scientists often treat ordinal items as though they were continuous, and they develop “integer constraints” that place latent variables on the scale of the observed, integer-coded ordinal variables [@merkleIdentificationScalingLatent2026].
 
-This matters enormously for NCA because the method’s effect size and bottleneck thresholds are defined in terms of the observed coordinate system. In the original article, the scope is computed from the minima and maxima of $X$ and $Y$, and the effect size is the proportion of that scope lying above the ceiling line. Bottleneck levels are described as percentages of the observed range by default, though they may also be expressed in actual values or percentiles. Consequently, the threshold NCA reports is inseparable from the representation of the variable on the score axis. Change the coding of the items, the range of the scale, the transformation applied to the score, or the model used to produce latent estimates, and the threshold may change as well, even if the substantive relationship between the constructs has not.
+This matters enormously for NCA because the method’s effect size and bottleneck thresholds are defined in terms of the observed coordinate system. NCA's scope is computed from the minima and maxima of $X$ and $Y$, and the effect size is the proportion of that scope lying above the ceiling line. Bottleneck levels are described as percentages of the observed range by default, though they may also be expressed in actual values or percentiles. Consequently, the threshold NCA reports is inseparable from the representation of the variable on the score axis. Change the coding of the items, the range of the scale, the transformation applied to the score, or the model used to produce latent estimates, and the threshold may change as well, even if the substantive relationship between the constructs (or their necessary condition) has not.
 
 This is a stronger problem for NCA than for many conventional analyses. In a regression model, linear rescaling of a predictor changes the regression coefficient but not the underlying fitted relation in any substantive sense. With NCA, rescaling or redefining the score affects not only the numeric threshold reported in the bottleneck table but also the very quantity used to define effect size, because the scope is part of the denominator of $d = C/S$. Even when the form of the ceiling line is preserved geometrically, the substantive meaning of a bottleneck expressed as “55% of the predictor range” depends on how that range itself has been defined. If the observed range is sample dependent or instrument dependent, so too is the bottleneck.
 
@@ -187,17 +202,17 @@ In psychology, the absence of a natural metric makes this especially problematic
 
 A third problem concerns comparability. Many psychological questions are implicitly or explicitly comparative: researchers want to make statements that generalize across age groups, genders, cultures, clinical versus nonclinical samples, longitudinal waves, or alternative instruments purportedly measuring the same construct. Yet such comparisons are warranted only if the measurement structure is sufficiently invariant. With ordinal data, this problem is particularly delicate [@dursoScaleLengthDoes2022].
 
-This has direct implications for NCA. Suppose an NCA threshold for “self-control” is estimated in one group and then rhetorically generalized to another. If the score does not have the same meaning across those groups, then the threshold is not comparable in the first place. The same applies when different instruments are used across studies. An observed score threshold on one inventory is not automatically transportable to another inventory, even if both are intended to measure the same construct. The NCA recommendation [@dulNecessaryConditionAnalysis2023] to use valid and reliable scores is therefore necessary but insufficient for psychology. Validity and reliability do not by themselves guarantee cross-group or cross-instrument comparability [e.g., @dursoScaleLengthDoes2022].
+This has direct implications for NCA. Suppose an NCA threshold for “self-control” is estimated in one group and then rhetorically generalized to another. If the score does not have the same meaning across those groups, then the threshold is not comparable in the first place. The same applies when different instruments are used across studies. An observed score threshold on one inventory is not automatically transportable to another inventory, even if both are intended to measure the same construct. The NCA recommendation [@dulNecessaryConditionAnalysis2023] to use valid and reliable scores is therefore necessary but insufficient for psychology. Two equally valid scales for extraversion correlating 1.00 at the latent level may yield completely different NCA estimates because one is on a 7-point Likert scale and the other is a forced-choice measure or on a 4-point scale.
 
-The issue is even broader than formal group comparisons. When researchers use different translations, response formats, item sets, or score transformations, they are often implicitly changing the metric, the scope, and possibly the construct representation itself. If NCA is then used to estimate bottleneck levels, those levels may differ not because the underlying psychological necessity relation differs, but because the measurement system differs. Therefore, any necessity claim meant to travel across populations, settings, or instruments should be preceded by evidence that the score space being analyzed is sufficiently comparable for such transportability to be plausible.
+In sum, when researchers use different translations, response formats, item sets, or score transformations, they are often implicitly changing the metric, the scope, and possibly the construct representation itself. If NCA is then used to estimate bottleneck levels, those levels may differ not because the underlying psychological necessity relation differs, but because the measurement system differs. Therefore, any necessity claim meant to travel across populations, settings, or instruments should be preceded by evidence that the score space being analyzed is sufficiently comparable for such transportability to be plausible.
 
 ## Sensitivity to Skewness and Distributional Shape
 
-Of all the criticisms directed at NCA, the skewness critique is one of the most consequential for psychology. Sorjonen and colleauges [-@sorjonenNecessityFunctionSkewness2017] show in a simulation study that NCA’s calculated necessity effect has a negative association with the skewness of the predictor and a positive association with the skewness of the outcome. Most importantly, they conclude that at least some findings obtained with NCA fall within the range of what can be expected from the skewness of the predictor and the outcome alone. Their explanation is intuitive: if low values of $X$ are common because $X$ is negatively skewed and high values of $Y$ are common because $Y$ is positively skewed, then the upper-left corner of the scatterplot can become sparse even when the variables are unrelated in any substantively necessary sense.
+Sorjonen and colleauges [-@sorjonenNecessityFunctionSkewness2017] show in a simulation study that NCA’s calculated necessity effect has a negative association with the skewness of the predictor and a positive association with the skewness of the outcome. Most importantly, they conclude that at least some findings obtained with NCA fall within the range of what can be expected from the skewness of the predictor and the outcome alone. Their explanation is intuitive: if low values of $X$ are common because $X$ is negatively skewed and high values of $Y$ are common because $Y$ is positively skewed, then the upper-left corner of the scatterplot can become sparse even when the variables are unrelated in any substantively necessary sense.
 
 The later paper by Sorjonen and Melin [@sorjonenPredictingSignificanceNecessity2019] extends the concern to NCA’s inferential machinery. They report that the permutation-based significance test can yield significant results even when the true population necessity effect is very weak, and that in some situations the significance of the necessity effect increases with a greater degree of *sufficiency*, which they regard as paradoxical for a method aimed at identifying necessary but not sufficient conditions.
 
-These concerns are particularly important in psychology because nonnormality is not an exotic edge case [@toffaliniClustersThatAre2024; @cainUnivariateMultivariateSkewness2017]. Although NCA does not assumes normality, the kinds of distributional asymmetries that are routine in psychological data are exactly the kinds of features that can create or exaggerate the sparse-corner patterns on which NCA relies [@sorjonenNecessityFunctionSkewness2017; @sorjonenPredictingSignificanceNecessity2019].
+These concerns are particularly important in psychology because nonnormality is not an exotic edge case [@toffaliniClustersThatAre2024; @cainUnivariateMultivariateSkewness2017]. Although NCA does not assumes normality, the kinds of distributional asymmetries that are routine in psychological data—but are not properties of the constructs—are exactly the kinds of features that can create or exaggerate the sparse-corner patterns on which NCA relies [@sorjonenNecessityFunctionSkewness2017; @sorjonenPredictingSignificanceNecessity2019].
 
 This should change how psychological researchers think about an empty corner. In a domain with natural metrics and relatively well-behaved distributions, an empty upper-left region may plausibly reflect a genuine constraint. In psychology, however, the same geometry may arise because the predictor is bounded and concentrated at the high end, because the outcome is bounded and concentrated at the low end, or because the response categories compress information. None of these explanations is inconsistent with the NCA pattern as such.
 
@@ -217,19 +232,35 @@ In psychological measurement error is intrinsic to the process of using item res
 
 The implications are straightforward. If scores near the relevant ceiling region are measured less precisely than scores elsewhere, then the geometric pattern that NCA interprets as evidence of a bottleneck may partly be a by-product of differential precision. Likewise, if a few cases appear in the ostensibly empty upper-left corner because of response noise, careless responding, or unstable measurement at the extremes, the analyst faces a difficult interpretive choice: treat them as substantive falsifications of necessity, or treat them as measurement artifacts [@dulNecessaryConditionAnalysis2016]. The original NCA framework acknowledges the possibility of outliers and even discusses “virtually necessary” conditions in stochastic terms. But in psychological data, the outlier-versus-error distinction is often not adjudicable from the score data alone.
 
-# Simulation Study
+## Rationale of the Study and Hypotheses
 
-The preceding arguments imply that NCA results could vary depending on basic psychometric issues. In psychological research, however, a method requires that the estimated effects remains fairly stable when psychometric features of the observed scores are changed. To prove the points raised, we conducted a simulation study varying multiple features of psychological measurement, including score construction, loading strength and reliability, response formats, threshold placement, and sample restriction. Additionally, we estimated the robustness of the results across multiple sample sizes and latent association values.
+The preceding arguments raise two concerns regarding the application of NCA to psychological data.
+
+First, NCA may not clearly distinguish between correlational relationships and necessity conditions. Because NCA is based on the geometry of the observed X–Y distribution, a positive association will typically produce a sparsely populated upper-left region even in the absence of a true necessity relation. The extent of this empty space depends on sample size and association strength, reflecting a probabilistic feature of the joint distribution rather than a deterministic constraint. As sample size increases, observations are more likely to appear in this region.
+
+Second, NCA estimates may be sensitive to standard psychometric features of psychological measurement. Observed scores are constructed from ordinal items and depend on design choices such as score construction, item loadings (reliability), response formats, threshold placement, and sample composition. If NCA is to support construct-level interpretation, its estimates should remain relatively stable under such variations. This assumption is examined here by systematically manipulating these features while holding the underlying latent association constant.
+
+Based on these considerations, we formulate the following expectations.
+
+- Under a purely correlational data-generating process without a necessity relation, the proportion of statistically significant NCA results will exceed the nominal alpha level.
+
+- NCA effect size estimates will vary across psychometric conditions, even when the latent association is held constant.
+
+- NCA effect sizes will increase with the strength of the latent association but decrease with increasing sample size, as larger samples are more likely to populate the boundary region that defines the NCA effect.
+
+To evaluate these expectations, we conducted a simulation study using a unified paired design.
+
+# Simulation Study
 
 ## Simulation design
 
-Each replication followed the same sequence. First, we generated one latent paired dataset for a predictor construct $X$ and an outcome construct $Y$. Second, we estimated a latent-reference NCA effect on those latent variables. Third, starting from that same latent dataset, we generated multiple observed versions of the variables by altering one psychometric feature at a time. Fourth, we re-estimated NCA on each observed-score dataset. Because all observed conditions within a replication were derived from the same latent source, differences among conditions can be directly attributed to the measurement or sampling manipulation rather than to differences in the underlying latent relation.
+Each replication followed the same sequence. First, we generated one latent paired dataset for a predictor construct $X$ and an outcome construct $Y$. Second, we estimated a latent-reference NCA effect on those latent variables. Third, starting from that same latent dataset, we generated multiple observed versions of the variables by altering one psychometric feature at a time. Fourth, we re-estimated NCA on each observed-score dataset. Because all observed conditions within a replication were derived from the same latent source, differences among conditions can be directly attributed to the measurement or sampling manipulation rather than to differences in the underlying latent relation. For each single condition, we repeated the process 1.000 times for a total of 171.000 NCA analyses (3 sample sizes * 3 beta values * 19 conditions * 1.000). 
+
+For the simulation, we manually defined the main functions to estimate NCA effect sizes and permutation-based p-values. This was done to speed up the simulation. A small replication using 1.000 iterations and 1.000 permutations per test yielded perfect correlation for effect sizes estimated using the NCA package and our function and a correlation > 0.999 for the *p* values.
 
 ## Latent data-generating model
 
-For each replication, latent data were generated from a simple linear model. A latent predictor $\eta_X$ was sampled from a standard normal source and standardized within replication. A latent outcome $\eta_Y$ was then generated as $\eta_Y = \beta_\eta X + \epsilon$, where $\beta$ controlled the strength of the latent association and the residual variance was chosen so that the population variance of $\eta_Y$ was approximately one. This specification does not impose a latent necessity structure [^1]. Instead, it creates a stable latent relation and then asks how NCA behaves when the observed-score representation of that relation is altered. The latent-level NCA effect can therefore be interpreted as a benchmark \[though spurious\] quantity for each replication, not as a theoretical “true necessity” parameter in a population model.
-
-[^1]: Necessity structures spuriously 'emerge' when analyzing correlated data [@sorjonenQuestionableNecessityEffects2026].
+For each replication, latent data were generated from a simple linear model. A latent predictor $\eta_X$ was sampled from a standard normal source and standardized within replication. A latent outcome $\eta_Y$ was then generated as $\eta_Y = \beta_\eta X + \epsilon$, where $\beta$ controlled the strength of the latent association and the residual variance was chosen so that the population variance of $\eta_Y$ was approximately one and the association could be interpreted as a correlation coefficient. This specification does not impose a latent necessity structure. Instead, it creates a stable latent relation and then asks how NCA behaves when the observed-score representation of that relation is altered. The latent-level NCA effect can therefore be interpreted as a benchmark \[though spurious\] quantity for each replication, not as a theoretical “true necessity” parameter in a population model.
 
 Sample size and latent association strength were treated as outer design factors. The simulation crossed sample sizes of $n = 250$, $500$, and $1000$ with latent association values of $\beta = 0.20$, $0.40$, and $0.60$. For each design cell, 1000 replications were generated. This yielded a broad set of conditions ranging from relatively weak to moderate latent associations and from common to comparatively large sample sizes in psychological research.
 
@@ -237,11 +268,11 @@ Sample size and latent association strength were treated as outer design factors
 
 Observed variables were generated from the latent variables through a unidimensional ordinal item model. For each construct, six items were simulated by combining the latent variable with item-specific residual error, $y^*_{ij} = \lambda_j \eta_i + e_{ij}$, where $\lambda_j$ denotes the item loading and the residual variance was set to $1-\lambda_j^2$. The continuous response propensities $y^*_{ij}$ were then discretized into ordinal response categories using fixed thresholds. Unless otherwise manipulated, the baseline measurement setup used six items per scale, loadings of $\lambda = 0.70$, and five response categories.
 
-Thresholds were constructed to yield a psychologically plausible response format in which middle categories were more common than extreme categories. Observed scale scores were then formed from the item responses. Sum scores were used as the default representation throughout the simulation, and factor scores were included only in the score-construction block as an alternative scoring method. Factor scores were obtained from separate one-factor confirmatory factor analyses for the $X$ and $Y$ item sets, estimated with an ordinal-data CFA model using WLSMV.
+Thresholds were constructed to yield an ideal response format in which middle categories were more common than extreme categories. Observed scale scores were then formed from the item responses. Sum scores were used as the default representation throughout the simulation, and factor scores were included only in the score-construction block as an alternative scoring method. Factor scores were obtained from separate one-factor confirmatory factor analyses for the $X$ and $Y$ item sets, estimated with an ordinal-data CFA model using WLSMV.
 
 ## Experimental blocks
 
-All manipulations were implemented one factor at a time, with the remaining psychometric features held at their baseline values. This made it possible to isolate how much each feature altered the NCA estimate relative to the latent-reference effect.
+All manipulations were implemented one factor at a time, with the remaining psychometric features held at their baseline values. This made it possible to isolate how much each feature alone altered the NCA estimate relative to the latent-reference effect.
 
 ### Score construction
 
@@ -265,31 +296,29 @@ Item wording, endorsement difficulty, and response-style effects can all change 
 
 The fifth block addressed range restriction. Starting from the same latent dataset, we selected subsamples by restricting either the latent predictor or the latent outcome to lower- or upper-range segments. Operationally, restrictions were implemented on the latent variables using percentile cutoffs that retained approximately 70% of cases in each selected sample. We considered four restriction conditions: lower-range and upper-range restriction on $\eta_X$, and lower-range and upper-range restriction on $\eta_Y$.
 
-This decomposition makes it possible to separate changes due to sample selection from additional changes introduced by measurement and scoring after selection.
+This decomposition makes it possible to separate changes due to sample selection from additional changes introduced by measurement and scoring after selection. However, this manipulation also affects sample size, which may also affect the results compared to the other manipalutions.
 
 ## NCA estimation and evaluation criteria
 
-All NCA estimates were computed with a single ceiling technique, the nonparametric CE-FDH method. We selected this estimate as it is the most widely used and its use is suggested for psychological data [@marchettiNecessityCausalityMental2026; @dulNecessaryConditionAnalysis2023; @dulNecessaryConditionAnalysis2016]. The primary outcome considered was the NCA effect size $d$, defined as the proportion of the observed scope occupied by the ceiling zone. In addition, the simulation stored auxiliary NCA outputs such as bottleneck information, together with descriptive properties of the analyzed $X$ and $Y$ distributions, including their means, standard deviations, skewness, and kurtosis.
+All NCA estimates were computed with a single ceiling technique, the nonparametric CE-FDH method. We selected this estimate as it is the most widely used and its use is suggested for psychological data and the permutation significance test was developed for this ceiling technique [@marchettiNecessityCausalityMental2026; @dulNecessaryConditionAnalysis2023; @dulNecessaryConditionAnalysis2016]. The primary outcome considered was the NCA effect size $d$, defined as the proportion of the observed scope occupied by the ceiling zone. In addition, we stored descriptive properties of the analyzed $X$ and $Y$ distributions, including their means, standard deviations, skewness, and kurtosis.
 
 For each observed condition, we also retained the difference between the observed effect and the latent full-sample reference. For range-restriction conditions, we also retained differences from the condition-specific latent restricted-sample reference.
 
-Because the primary question concerned interpretability and stability rather than inferential rejection we did not conduct nor reported any permutation-based significance testing.
+For each replication, the permutation-based significance test developed by Dul and colleagues [@dulNecessaryConditionAnalysis2016] was applied using 10.000 permutations to obtain precise estimates of *p* values.
 
-All results are available on the GitHub page of the project and in the supplementary materials. Here we will focus on the stability of the effect sizes only.
+All results are available on the GitHub page of the project and in the supplementary materials. Here we will focus on significance tests and the stability of the effect sizes.
 
 ## A critical caveat
 
-A careful reader probably recognized an issue in our simulation approach: We did not simulate any necessity scenario. Our data-generating process does not imply the existence of any necessary condition in the observed data but only latent associations between the data. As a consequence, any presence of a necessity effect is by definition a false positive. However, NCA always detects some degree of necessity conditions when two variables are correlated [@sorjonenQuestionableNecessityEffects2026], but the proponents of NCA in psychology suggested using this method at least as an accompanying descriptive tool that integrates 'classical' association-based studies. For instance, about the use of archival data, Marchetti and colleagues state "*Re-analyzing these data with a different causal perspective can result in new complementary insights*" [@marchettiNecessityCausalityMental2026].
-
-With our simulation we show how not even a conservative use of NCA that does not aim to unveil any *true* underlying necessity is defensible without strong psychometric assumptions or substantive robustness tests.
+As previously highlighted, we did not simulate any necessity scenario. Our data-generating process does not imply the existence of any necessary condition in the observed data but only latent associations between the data. As a consequence, any presence of a necessity effect is by definition a false positive. 
 
 # Results
 
 ```{r}
 #| label: open-sim-results
 
-res_grid<-read.csv(here::here("simulations/simulation_results.csv"))
-tab_sum<-read.csv(here::here("simulations/results_table.csv"))
+res_grid<-read.csv(here::here("simulations/simulation_results_fast_10k.csv"))
+tab_sum<-read.csv(here::here("simulations/results_table_fast_10k.csv"))
 ```
 
 ```{r}
@@ -356,6 +385,59 @@ dat_plot <- res_grid %>%
     se_effect = sd(effect_size, na.rm = TRUE) / sqrt(sum(!is.na(effect_size))),
     ci_low = mean_effect - 1.96 * se_effect,
     ci_high = mean_effect + 1.96 * se_effect,
+    .groups = "drop"
+  )
+
+
+dat_plot <- res_grid %>%
+  {if ("sample_size" %in% names(.)) mutate(., sample_size_plot = sample_size) else mutate(., sample_size_plot = n_input)} %>%
+  {if ("design_beta" %in% names(.)) mutate(., beta_plot = design_beta) else mutate(., beta_plot = beta)} %>%
+  mutate(
+    condition_plot = case_when(
+      block == "1A_score_construction" ~ score_type,
+      block == "1B_reliability" ~ paste0("loading=", condition_value),
+      block == "1C_response_categories" ~ paste0("cats=", condition_value),
+      block == "1D_threshold_shift" ~ as.character(condition_value),
+      block == "1E_range_restriction" ~ as.character(condition_value),
+      TRUE ~ as.character(condition_value)
+    ),
+    block = factor(
+      block,
+      levels = c(
+        "1A_score_construction",
+        "1B_reliability",
+        "1C_response_categories",
+        "1D_threshold_shift",
+        "1E_range_restriction"
+      ),
+      labels = c(
+        "1A Score construction",
+        "1B Reliability",
+        "1C Response categories",
+        "1D Threshold shift",
+        "1E Range restriction"
+      )
+    ),
+    beta_plot = factor(beta_plot, levels = sort(unique(beta_plot))),
+    sample_size_plot = factor(sample_size_plot, levels = c(250, 500, 1000)),
+    condition_plot = factor(
+      condition_plot,
+      levels = names(factLabels),
+      labels = factLabels
+    )
+  ) %>%
+  group_by(block, condition_plot, sample_size_plot, beta_plot) %>%
+  summarise(
+    mean_effect = mean(effect_size, na.rm = TRUE),
+    se_effect = sd(effect_size, na.rm = TRUE) / sqrt(sum(!is.na(effect_size))),
+    ci_low = mean_effect - 1.96 * se_effect,
+    ci_high = mean_effect + 1.96 * se_effect,
+
+    prop_significant = mean(p_value < .05, na.rm = TRUE),
+    median_p = median(p_value, na.rm = TRUE),
+    p25 = quantile(p_value, .25, na.rm = TRUE),
+    p75 = quantile(p_value, .75, na.rm = TRUE),
+
     .groups = "drop"
   )
 ```
@@ -438,7 +520,84 @@ b5_ylower <- summary_data$mean_effect[summary_data$block == "Block 5" & summary_
 b5_yupper <- summary_data$mean_effect[summary_data$block == "Block 5" & summary_data$condition_plot == "y_upper"]
 ```
 
-The complete set of results is available in the project repository and in the supplementary materials. Here we focus on the main descriptive pattern: how much NCA's effect size $d$ changes when the latent relation is held constant but the observed-score representation is altered. @fig-summary reports a compact summary averaged across sample-size and latent-association conditions.
+The complete set of results and Tables is available in the project repository and in the supplementary materials. Here we focus on the analysis of false positives and the main descriptive pattern of effect sizes.
+
+## False Positive Analysis
+
+The results of the permutation-based significance test for NCA proposed by Dul and colleagues [-@dulStatisticalSignificanceTest2020] are summarized in @fig-p-summary. Three main findings emerge.
+
+- Across all conditions, the proportion of statistically significant NCA effects largely exceeded the nominal 5% level, despite the absence of any necessity condition in the data-generating process.
+
+- The probability of obtaining significant results increased with both sample size and the strength of the latent association. For example, when $N = 1000$ and $\beta = 0.60$, nearly all replications yielded statistically significant p-values, thereby supporting a non-existent necessity condition.
+
+- Statistical significance also varied across psychometric conditions, beyond the effects of sample size and latent association. Conditions involving range restriction—resulting in an approximately 30% reduction in sample size—tended to produce lower *p*-values. Compared to the other conditions, lower proportions of significant results were also observed under skewed distributions.
+
+```{r}
+#| label: figsd-p-summary
+#| fig-cap: Percentage of statistically significant NCA effects across conditions, as a function of sample size (N) and latent association (β), under a data-generating process without a true necessity condition.
+
+dat_plot %>%
+  mutate(
+    condition_plot = forcats::fct_reorder(condition_plot, prop_significant)
+  ) %>% ggplot(
+  aes(x = condition_plot, y = prop_significant)
+  ) +
+  geom_point(size = 2.5) +
+  geom_segment(aes(xend = condition_plot, y = 0, yend = prop_significant)) +
+  geom_hline(yintercept = 0.05, col = "red") +
+  coord_flip() +
+  facet_grid(
+  beta_plot ~ sample_size_plot,
+  labeller = labeller(
+    beta_plot = function(x) paste0("Latent β: ", x),
+    sample_size_plot = function(x) paste0("N = ", x)
+    )
+  ) +
+  labs(
+    x = NULL,
+    y = "Proportion significant, p < .05"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+
+```{r}
+#| label: figsd-p-summary2
+#| fig-cap: Percentage of statistically significant NCA effects across conditions, as a function of sample size (N) and latent association (β), under a data-generating process without a true necessity condition. 
+
+dat_plot %>%
+  mutate(
+    condition_plot = forcats::fct_reorder(condition_plot, prop_significant)
+  ) %>%
+  ggplot(
+    aes(
+      x = condition_plot,
+      y = prop_significant,
+      colour = beta_plot,
+      shape = sample_size_plot
+    )
+  ) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 0.05, linetype = "dashed") +
+  ylim(c(0,1)) +
+  scale_x_discrete(labels = factLabels) +
+  labs(
+    x = NULL,
+    y = "Proportion significant (p < .05)",
+    colour = expression(beta),
+    shape = "N"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(angle = 70, hjust = 1)
+  )
+```
+
+
+## Analysis of the Effect Sizes
+
+@fig-summary reports a compact summary averaged across sample-size and latent-association conditions.
 
 Across all summarized conditions, the average observed NCA effect ranged from `r round(overall_min, 2)` to `r round(overall_max, 2)`, even though the underlying latent relation was fixed within each block.
 
@@ -632,13 +791,13 @@ tab_latent_n<-read.csv(here::here("simulations/results_table_n.csv"))
 
 From the previous simulation a paradoxical problem emerged: the effect size estimates varied as a function of sample size. We therefore extended the basic simulation across multiple sample sizes. Using a fixed $\beta = 0.40$ latent association and estimating NCA directly on the latent variables, the mean effect decreased from `r round(tab_latent_n$mean_effect_size[tab_latent_n$n_input == min(tab_latent_n$n_input)], 2)` at N = `r min(tab_latent_n$n_input)` to `r round(tab_latent_n$mean_effect_size[tab_latent_n$n_input == 2000], 2)` at N = 2000, and it continued to decline up to `r round(tab_latent_n$mean_effect_size[tab_latent_n$n_input == max(tab_latent_n$n_input)], 2)` at N = `r max(tab_latent_n$n_input)`, even after the curve began to flatten (see @fig-n).
 
-This pattern is difficult to reconcile with the idea that $d$ captures a stable population feature of a necessity relation. If the underlying latent relation is held constant and the estimate nonetheless declines as more data are observed, then the NCA effect cannot be interpreted straightforwardly as a sample-size-invariant construct property. Instead, it appears to depend partly on the probability that increasingly large samples will populate regions of the $X$-$Y$ space that smaller samples leave empty by chance. That result strengthens the broader conclusion of the article: in psychological data, NCA often tracks properties of observed-score geometry rather than stable properties of latent constructs.
+This pattern is difficult to reconcile with the idea that $d$ captures a stable population feature of a necessity relation. If the underlying latent relation is held constant and the estimate nonetheless declines as more data are observed, then the NCA effect cannot be interpreted straightforwardly as a sample-size-invariant construct property. Instead, it appears to depend partly on the probability that increasingly large samples will populate regions of the $X$-$Y$ space that smaller samples leave empty by chance. This strengthens and integrates the broader conclusion of the previous results: in psychological data, NCA often tracks properties of observed-score geometry rather than stable properties of latent constructs.
 
 ```{r}
 #| label: fig-n
-#| fig-cap: Sample-size dependence of the latent-level NCA effect
+#| fig-cap: Sample-size dependence of the latent-level NCA effect. 
 
-res_latent_n %>%
+sum_tbl <- res_latent_n %>%
   group_by(n_input) %>%
   summarise(
     mean_effect = mean(effect_size, na.rm = TRUE),
@@ -646,8 +805,10 @@ res_latent_n %>%
     ci_low = mean_effect - 1.96 * se,
     ci_high = mean_effect + 1.96 * se,
     .groups = "drop"
-  ) %>%
-  ggplot(aes(x = n_input, y = mean_effect)) +
+  )
+
+# Linear scale
+p_linear <- ggplot(sum_tbl, aes(x = n_input, y = mean_effect)) +
   geom_point(size = 2.8) +
   geom_line() +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 80) +
@@ -656,13 +817,31 @@ res_latent_n %>%
     y = "Mean latent NCA effect size"
   ) +
   theme_minimal(base_size = 12)
+
+# Log scale
+p_log <- ggplot(sum_tbl, aes(x = n_input, y = mean_effect)) +
+  geom_point(size = 2.8) +
+  geom_line() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0.05) +
+  scale_x_log10() +
+  labs(
+    x = "Sample size (log scale)",
+    y = "Mean latent NCA effect size"
+  ) +
+  theme_minimal(base_size = 12)
+
+# p_linear
+p_log
 ```
+
 
 # Discussion
 
-The present study examined a simple but consequential question for psychological research: how much can the estimated NCA effect change solely because the observed variables are scored, discretized, or sampled differently? Across all simulation blocks, the answer was clear. The observed NCA effect was not stable. It changed as a function of score construction, loading strength, number of response categories, threshold placement, range restriction, and sample size, even though the underlying latent relation was unchanged within each paired replication. This is exactly the pattern one would expect if NCA in psychology is operating primarily on the geometry of observed-score distributions rather than on a construct-level necessity relation.
+The present study examined two simple but consequential questions for psychological research: does NCA analyses discriminate pure correlations from necessity conditions? And, how much can the estimated NCA effect change solely because the observed variables are scored, discretized, or sampled differently? Across all simulation blocks, the answer to both questions was clear: NCA often detects necessity effects under a 'simple' correlation design; And the observed NCA effect is not stable, but changes as a function of score construction, loading strength, number of response categories, threshold placement, range restriction, and sample size. This is exactly the pattern one would expect if NCA in psychology is operating primarily on the geometry of observed-score distributions rather than on a construct-level necessity relation.
 
-The first implication is psychometric. In these simulations, factor scores yielded systematically larger effects than sum scores, despite being computed from the same item responses, with mean effects of about 0.15 and 0.12, respectively. Likewise, routine questionnaire design choices mattered substantially: moving from four to seven response categories increased the average observed effect from about 0.08 to 0.17, and threshold shifts that induced plausible skewness in either direction still altered the estimated effect in a systematic way. These are not exotic manipulations. They are ordinary features of psychological measurement. If an NCA estimate changes this much when the scoring rule or response format changes, then the resulting necessity claim cannot be treated as a stable property of the latent constructs alone.
+The first implication is fatal for NCA analyses: Under the common scenario of correlated variables, NCA will detect necessity conditions that do not exist and false positives will increase with increasing correlation values and sample size, meaning that the larger the sample the higher the probability of drawing wrong-and not correct-conclusions.
+
+False positives aside, the following implications are psychometric. In our simulations, factor scores yielded systematically larger effects than sum scores, despite being computed from the same item responses, with mean effects of about 0.15 and 0.12, respectively. Likewise, routine questionnaire design choices mattered substantially: moving from four to seven response categories increased the average observed effect from about 0.08 to 0.17, and threshold shifts that induced plausible skewness in either direction still altered the estimated effect in a systematic way. These are not exotic manipulations. They are ordinary features of psychological measurement. If an NCA estimate changes this much when the scoring rule or response format changes, then the resulting necessity claim cannot be treated as a stable property of the latent constructs alone.
 
 The reliability block strengthens that conclusion further. When loadings increased from .50 to .85, the mean observed effect decreased from about 0.13 to 0.09. In other words, improving the relation between the items and the latent variable did not make the observed NCA estimate converge upward on a clearer construct-level quantity. It moved in the opposite direction. That result is especially problematic for psychological applications, because it implies that stronger measurement does not reveal a hidden necessity relation more cleanly. Instead, the observed necessity effect may partly depend on the distortions introduced by noisier measurement.
 
@@ -670,12 +849,12 @@ The range-restriction results point to a parallel sampling problem. Excluding th
 
 The most damaging result, however, may be the sample-size pattern. In the latent-only extension, with the latent relation fixed at $\beta = 0.40$, the mean NCA effect decreased from about 0.20 at $N = 250$ to about 0.18 at $N = 2000$, and then continued to decline to about 0.17 by $N = 10000$. That pattern is difficult to reconcile with the idea that NCA is estimating a stable population feature. If the data-generating relation is unchanged but the effect shrinks as more observations are collected, then the estimate is at least partly a function of finite-sample sparsity. Larger samples are simply more likely to populate regions of the $X$-$Y$ space that smaller samples leave empty by chance. Under ordinary stochastic relations, the empty corner is therefore not strong evidence for an underlying necessity structure; it is often evidence that the sample has not yet filled the corner.
 
-This result also clarifies a deeper theoretical issue. The simulations did not generate any true necessity process. The latent data-generating model was associational and stochastic, not boundary-based, and the manuscript explicitly acknowledges that any detected necessity effect is therefore, in that strict sense, a false positive. That caveat is not incidental. It reveals that the central question is not merely whether NCA is statistically sensitive, but whether a necessity model is theoretically admissible in the first place. A directional or even causal hypothesis is not enough. Most psychological theories imply that higher levels of one construct make an outcome more likely, more intense, or more stable on average. They do not imply that below some threshold of $X$, high values of $Y$ are structurally impossible. Yet that stronger claim is what a necessity interpretation requires.
+This result also clarifies a deeper theoretical issue. The simulations did not generate any true necessity process. The latent data-generating model was associational and stochastic, not boundary-based, and we explicitly acknowledge that any detected necessity effect is therefore, in that strict sense, a false positive. That caveat is not incidental. It reveals that the central question is not merely whether NCA is statistically sensitive, but whether a necessity model is theoretically admissible in the first place. A directional or even causal hypothesis is not enough. Most psychological theories imply that higher levels of one construct make an outcome more likely, more intense, or more stable on average. They do not imply that below some threshold of $X$, high values of $Y$ are structurally impossible. Yet that stronger claim is what a necessity interpretation requires.
 
 For that reason, the common suggestion that NCA can be used as a conservative add-on to regression or other average-effect models [@dulNecessaryConditionAnalysis2016; @dulNecessaryConditionAnalysis2023; @marchettiNecessityCausalityMental2026] is much less convincing and more damaging than it first appears. When the underlying theory is probabilistic, adding NCA does not reveal a deeper layer of causal structure. It risks redescribing the same stochastic relation in stronger language than the theory actually warrants. In that sense, NCA may be not only uninformative but counterproductive in psychological research: it can encourage researchers to speak as if they had identified a prerequisite or bottleneck when, in fact, they have only detected an observed empty corner whose size depends on scoring, thresholds, sample composition, and sample size. The present simulations show that even this conservative descriptive use is difficult to defend without unusually strong psychometric justification and extensive robustness checks.
 
 Taken together, these results suggest that the main burden of proof should be reversed. In psychology, NCA should not be treated as an attractive supplement that becomes acceptable whenever $X$ plausibly predicts $Y$. Instead, it should be reserved for situations in which the substantive theory independently implies a genuine boundary-type process: that is, a process in which some levels of the outcome are impossible, not merely improbable, below some level of the predictor. Such cases are likely to be rare. Indeed, many of the clearest “necessities” in psychology are not discovered empirical laws at all, but imposed thresholds, such as diagnostic cut-offs, selection rules, or administrative criteria. Those boundaries are often created by human classification decisions rather than uncovered from the latent structure of psychological constructs.
 
-The practical implication is therefore not simply that researchers should be more careful when applying NCA. It is that, in most ordinary psychological applications, the method is unlikely to identify a construct-level ground truth. At best, it describes constraints in a particular observed-score space under a particular scoring rule, response format, and sample composition. At worst, it converts finite-sample sparsity and measurement artifacts into substantively inflated claims about necessity. The broader conclusion of the article is thus not that necessity relations can never exist in psychology, but that NCA is informative only when a true necessity-like data-generating process is theoretically credible before the model is fit. Absent that prior justification, observed NCA effects should be interpreted primarily as properties of measurement and sampling geometry, not as evidence of latent psychological prerequisites.
+The practical implication is therefore not simply that researchers should be more careful when applying NCA. It is that, in most ordinary psychological applications, the method is unlikely to identify a construct-level ground truth. At best, it describes constraints in a particular observed-score space under a particular scoring rule, response format, and sample composition. At worst (but probable), it converts finite-sample sparsity and measurement artifacts into substantively inflated claims about necessity. Observed NCA effects should be interpreted primarily as properties of measurement and sampling geometry, not as evidence of latent psychological prerequisites, unless a true necessity-like data-generating process is theoretically credible before the model is fit and its estimates are robust across different psychometric conditions, samples, and sample sizes.
 
 # References
