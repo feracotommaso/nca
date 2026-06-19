@@ -352,77 +352,90 @@ display: none;
 </div>
 
 
-<div id="readme-nca-in-psychological-data" class="section level1">
-<h1>README: NCA in Psychological Data</h1>
-<p>This repository contains code and materials for a simulation study on
-<strong>Necessary Condition Analysis (NCA)</strong> in psychological
-research.</p>
-<div id="goal" class="section level2">
-<h2>Goal</h2>
-<p>Assess how much NCA estimates change when the latent relationship is
-held constant, but typical psychometric features of observed data
-vary.</p>
-</div>
-<div id="key-idea" class="section level2">
-<h2>Key Idea</h2>
-<p>NCA operates on the <strong>observed score distribution</strong>, not
-on latent constructs.</p>
-<p>In psychological data, observed scores depend on:</p>
+<div id="necessary-condition-analysis-project" class="section level1">
+<h1>Necessary Condition Analysis project</h1>
+<p>This repository contains the data, simulation code, manuscript
+sources, and rendered outputs for the NCA psychometrics project.</p>
+<div id="repository-map" class="section level2">
+<h2>Repository map</h2>
 <ul>
-<li>measurement error (reliability)</li>
-<li>ordinal scaling (Likert categories)</li>
-<li>threshold placement</li>
-<li>skewness</li>
-<li>sample selection</li>
-<li>…</li>
-</ul>
-<p>The project tests how strongly these features affect NCA results.</p>
-</div>
-<div id="design" class="section level2">
-<h2>Design</h2>
-<p>Paired simulation:</p>
-<ol style="list-style-type: decimal">
-<li>Generate latent variables (fixed relation)</li>
-<li>Compute <strong>latent-reference NCA</strong></li>
-<li>Create observed datasets from the same latent data</li>
-<li>Recompute NCA under different conditions</li>
-<li>Compare estimates</li>
-</ol>
-</div>
-<div id="simulation-factors" class="section level2">
-<h2>Simulation Factors</h2>
+<li><code>data/</code>: Scopus export data used in the manuscript
+figures.
 <ul>
-<li><strong>Reliability</strong> (factor loadings)</li>
-<li><strong>Ordinal scaling</strong> (thresholds, category
-structure)</li>
-<li><strong>Score construction</strong> (sum scores)</li>
-<li><strong>Range restriction</strong></li>
-</ul>
-</div>
-<div id="main-files" class="section level2">
-<h2>Main Files</h2>
+<li><code>nca_all.csv</code>: publications matching the broader NCA
+search.</li>
+<li><code>nca_psic.csv</code>: psychology subset.</li>
+</ul></li>
+<li><code>simulations/</code>: R scripts and simulation outputs.
 <ul>
-<li><code>simulations/nca_unified_paired_single_script.R</code> — main
-simulation script<br />
-</li>
-<li><code>simulations/simulation_results.csv</code> — raw results<br />
-</li>
-<li><code>simulations/results_table.csv</code> — aggregated
-results<br />
-</li>
-<li><code>simulations/simulation_results_n.csv</code> — additional
-sample size results</li>
-<li><code>simulations/results_table_n.csv</code> — additional sample
-size aggregated results<br />
-</li>
-<li><code>nca_paper.qmd</code> — manuscript</li>
-<li><code>nca_supplementary.cmq</code> - supplementary materials</li>
+<li><code>nca_unified_paired_single_script_rev.R</code>: full paired
+simulation framework.</li>
+<li><code>nca_simulation_fast.R</code>: faster CE-FDH implementation and
+main simulation run.</li>
+<li><code>nca_script_concordance.R</code>: concordance check between the
+fast implementation and <code>NCA</code>.</li>
+<li><code>simulation_results_*.csv</code>: replication-level
+outputs.</li>
+<li><code>results_table_*.csv</code>: aggregated summaries used by the
+paper/supplement.</li>
+</ul></li>
+<li><code>R/</code>: plotting helpers and exploratory plotting code.
+<ul>
+<li><code>plots.R</code>: ggplot summaries for simulation result
+tables.</li>
+</ul></li>
+<li><code>paper/</code>: manuscript, supplement, references, figures,
+and rendered outputs.
+<ul>
+<li><code>nca_paper.qmd</code>: main Quarto manuscript source.</li>
+<li><code>nca_supplementary.qmd</code>: supplementary materials
+source.</li>
+<li><code>nca_refs.bib</code>: bibliography.</li>
+<li><code>nca_paper.pdf</code>, <code>nca_paper.html</code>,
+<code>nca_paper.docx</code>: rendered manuscript outputs.</li>
+<li><code>nca_supplementary.html</code>: rendered supplement.</li>
+<li><code>_extensions/wjschne/apaquarto/</code>: local Quarto APA
+extension files.</li>
+</ul></li>
 </ul>
 </div>
-<div id="reproducibility" class="section level2">
-<h2>Reproducibility</h2>
-<p>Uncomment and run:</p>
-<pre class="r"><code>source(&quot;nca_unified_paired_single_script.R&quot;)</code></pre>
+<div id="main-outputs" class="section level2">
+<h2>Main outputs</h2>
+<ul>
+<li>Main simulation summary:
+<code>simulations/results_table_fast_10k.csv</code></li>
+<li>Main simulation replications:
+<code>simulations/simulation_results_fast_10k.csv</code></li>
+<li>Sample-size summary:
+<code>simulations/results_table_n.csv</code></li>
+<li>Sample-size replications:
+<code>simulations/simulation_results_n.csv</code></li>
+<li>Fast/NCA concordance output:
+<code>simulations/simulation_results_concordance.csv</code></li>
+</ul>
+<p>Large generated files are kept in the repository because the
+manuscript and supplement read from the saved result tables.</p>
+</div>
+<div id="reproducing" class="section level2">
+<h2>Reproducing</h2>
+<p>Open <code>necessary-condition-analysis.Rproj</code> in RStudio, or
+use the repository root as the working directory.</p>
+<p>Install the R packages used across the project:</p>
+<pre class="r"><code>install.packages(c(
+  &quot;dplyr&quot;, &quot;purrr&quot;, &quot;tibble&quot;, &quot;tidyr&quot;, &quot;ggplot2&quot;,
+  &quot;lavaan&quot;, &quot;NCA&quot;, &quot;furrr&quot;, &quot;future&quot;, &quot;patchwork&quot;,
+  &quot;here&quot;, &quot;knitr&quot;
+))</code></pre>
+<p>Render the manuscript and supplement with Quarto:</p>
+<pre class="sh"><code>quarto render paper/nca_paper.qmd
+quarto render paper/nca_supplementary.qmd</code></pre>
+<p>Simulation scripts include run blocks and parallel worker settings
+near the bottom of each file. Check those parameters before sourcing
+them, especially on local machines.</p>
+</div>
+<div id="license" class="section level2">
+<h2>License</h2>
+<p>See <code>LICENSE</code>.</p>
 </div>
 </div>
 

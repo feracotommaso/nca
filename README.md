@@ -1,62 +1,61 @@
-README: NCA in Psychological Data
-================
+# Necessary Condition Analysis project
 
-This repository contains code and materials for a simulation study on
-**Necessary Condition Analysis (NCA)** in psychological research.
+This repository contains the data, simulation code, manuscript sources, and rendered outputs for the NCA psychometrics project.
 
-## Goal
+## Repository map
 
-Assess how much NCA estimates change when the latent relationship is
-held constant, but typical psychometric features of observed data
-vary.
+- `data/`: Scopus export data used in the manuscript figures.
+  - `nca_all.csv`: publications matching the broader NCA search.
+  - `nca_psic.csv`: psychology subset.
+- `simulations/`: R scripts and simulation outputs.
+  - `nca_unified_paired_single_script_rev.R`: full paired simulation framework.
+  - `nca_simulation_fast.R`: faster CE-FDH implementation and main simulation run.
+  - `nca_script_concordance.R`: concordance check between the fast implementation and `NCA`.
+  - `simulation_results_*.csv`: replication-level outputs.
+  - `results_table_*.csv`: aggregated summaries used by the paper/supplement.
+- `R/`: plotting helpers and exploratory plotting code.
+  - `plots.R`: ggplot summaries for simulation result tables.
+- `paper/`: manuscript, supplement, references, figures, and rendered outputs.
+  - `nca_paper.qmd`: main Quarto manuscript source.
+  - `nca_supplementary.qmd`: supplementary materials source.
+  - `nca_refs.bib`: bibliography.
+  - `nca_paper.pdf`, `nca_paper.html`, `nca_paper.docx`: rendered manuscript outputs.
+  - `nca_supplementary.html`: rendered supplement.
+  - `_extensions/wjschne/apaquarto/`: local Quarto APA extension files.
 
-## Key Idea
+## Main outputs
 
-NCA operates on the **observed score distribution**, not on latent
-constructs.
+- Main simulation summary: `simulations/results_table_fast_10k.csv`
+- Main simulation replications: `simulations/simulation_results_fast_10k.csv`
+- Sample-size summary: `simulations/results_table_n.csv`
+- Sample-size replications: `simulations/simulation_results_n.csv`
+- Fast/NCA concordance output: `simulations/simulation_results_concordance.csv`
 
-In psychological data, observed scores depend on: 
+Large generated files are kept in the repository because the manuscript and supplement read from the saved result tables.
 
-- measurement error (reliability) 
-- ordinal scaling (Likert categories) 
-- threshold placement
-- skewness
-- sample selection
-- ...
+## Reproducing
 
-The project tests how strongly these features affect NCA results.
+Open `necessary-condition-analysis.Rproj` in RStudio, or use the repository root as the working directory.
 
-## Design
+Install the R packages used across the project:
 
-Paired simulation:
-
-1.  Generate latent variables (fixed relation)
-2.  Compute **latent-reference NCA**
-3.  Create observed datasets from the same latent data
-4.  Recompute NCA under different conditions
-5.  Compare estimates
-
-## Simulation Factors
-
-- **Reliability** (factor loadings)
-- **Ordinal scaling** (thresholds, category structure)
-- **Score construction** (sum scores)
-- **Range restriction**
-
-## Main Files
-
-- `simulations/nca_unified_paired_single_script.R` — main simulation script  
-- `simulations/simulation_results.csv` — raw results  
-- `simulations/results_table.csv` — aggregated results  
-- `simulations/simulation_results_n.csv` — additional sample size results 
-- `simulations/results_table_n.csv` — additional sample size aggregated results  
-- `nca_paper.qmd` — manuscript
-- `nca_supplementary.cmq` - supplementary materials
-
-## Reproducibility
-
-Uncomment and run:
-
-``` r
-source("nca_unified_paired_single_script.R")
+```r
+install.packages(c(
+  "dplyr", "purrr", "tibble", "tidyr", "ggplot2",
+  "lavaan", "NCA", "furrr", "future", "patchwork",
+  "here", "knitr"
+))
 ```
+
+Render the manuscript and supplement with Quarto:
+
+```sh
+quarto render paper/nca_paper.qmd
+quarto render paper/nca_supplementary.qmd
+```
+
+Simulation scripts include run blocks and parallel worker settings near the bottom of each file. Check those parameters before sourcing them, especially on local machines.
+
+## License
+
+See `LICENSE`.
