@@ -27,9 +27,9 @@ author:
         country: Italy
 author-note:
   disclosures:
-    data-sharing: Data, code, and materials are available at https://github.com/feracotommaso/nca
-    conflict-of-interest: The authors have no conflict of interest to declare
-    financial-support: The authors received no funding for this study
+    data-sharing: Data, code, and materials are available at https://github.com/feracotommaso/nca.
+    conflict-of-interest: The authors have no conflict of interest to declare.
+    financial-support: The authors received no funding for this study.
 abstract: 'This study evaluates the interpretability of Necessary Condition Analysis (NCA) when applied to psychological data, where variables typically represent correlated latent constructs measured through imperfect instruments. Using a unified simulation framework, we simulated latent relationships between two variables under H0 for necessity while systematically varying common psychometric and sampling features, including score construction, reliability, ordinal scaling and threshold placement, skewness, and range restriction. Results showed that NCA estimates are sensitive to properties of the observed score distribution, despite identical latent associations. In particular, ordinal scaling, threshold shifts, skewness, and range restriction alter the geometry of the observed data space, producing marked changes in estimated necessity effects. Reliability and score construction also contribute to deviations, although to a lesser extent. Both effect sizes and significance results are influenced by sample size and by the strength of the latent association, even though the data-generating process does not contain any true necessity relation. These findings suggest that, in psychological applications, NCA results can reflect simple associations without necessities or distributional features induced by measurement and sampling rather than stable properties of underlying constructs. We conclude that NCA may be descriptively informative when interpreted as a property of a specific observed-score space, but that construct-level necessity claims require, at minimum, independent boundary-type theory, strong psychometric justification, and transparent robustness checks.'
 keywords: [necessary condition analysis, psychometrics, measurement, meta-research]
 bibliography: nca_refs.bib
