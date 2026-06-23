@@ -855,10 +855,12 @@ The practical implication is therefore not simply that researchers should be mor
 
 - **Conflict of interest**: The authors have no conflict of interest to declare.
 
-- **Ethics approval**: Not applicable
+- **Ethics approval**: Not applicable.
 
-- **Consent to participate**: Not applicable
+- **Consent to participate**: Not applicable.
 
-- **Availability of data, code, and materials**: Data, code, and materials are available at [https://github.com/feracotommaso/nca](https://github.com/feracotommaso/nca)
+- **Consent for publication**: Not applicable.
+
+- **Availability of data, code, and materials**: Data, code, and materials are available at [https://github.com/feracotommaso/nca](https://github.com/feracotommaso/nca).
 
 # References
