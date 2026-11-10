@@ -1,6 +1,6 @@
 ---
 title: "Necessary Condition Analysis With Psychological Data: A Psychometric Critique"
-shorttitle: "The bare necessity of NCA"
+shorttitle: "A Psychometric Critique of NCA"
 
 author:
   - name: Tommaso Feraco
